@@ -1,0 +1,264 @@
+@{
+    ViewData["Title"] = "Quản Lý Ảnh Sản Phẩm";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-images"></i> Quản Lý Ảnh Sản Phẩm</h2>
+        <a href="/Shop/Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Quay Lại
+        </a>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-cloud-upload"></i> Upload Hình Ảnh</h5>
+        </div>
+        <div class="card-body">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Chọn Ảnh (Tối đa 10 ảnh, mỗi ảnh < 5MB)</label>
+                    <input type="file" class="form-control" id="fileInput" 
+                           accept="image/*" multiple required>
+                    <small class="text-muted">Hỗ trợ: JPG, JPEG, PNG, GIF, WEBP</small>
+                </div>
+                
+                <!-- Preview Area -->
+                <div id="preview" class="row g-3 mb-3"></div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-upload"></i> Upload Ảnh
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Uploaded Images Gallery -->
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-card-image"></i> Thư Viện Ảnh</h5>
+        </div>
+        <div class="card-body">
+            <div id="gallery" class="row g-3">
+                <div class="col-12 text-center text-muted">
+                    <i class="bi bi-images" style="font-size: 3rem;"></i>
+                    <p>Chưa có ảnh nào được upload</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xem Ảnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" alt="">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-danger" id="deleteImageBtn">
+                    <i class="bi bi-trash"></i> Xóa Ảnh
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const API_URL = 'http://localhost:5000';
+    let uploadedImages = [];
+    let currentImageFileName = '';
+
+    // Preview images before upload
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        const preview = document.getElementById('preview');
+        preview.innerHTML = '';
+        
+        const files = Array.from(e.target.files);
+        if (files.length > 10) {
+            alert('Chỉ được chọn tối đa 10 ảnh!');
+            e.target.value = '';
+            return;
+        }
+
+        files.forEach((file, index) => {
+            if (file.size > 5 * 1024 * 1024) {
+                alert(`File ${file.name} quá lớn! Tối đa 5MB`);
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                preview.innerHTML += `
+                    <div class="col-md-3">
+                        <div class="card">
+                            <img src="${event.target.result}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                            <div class="card-body p-2 text-center">
+                                <small class="text-muted">${file.name}</small><br>
+                                <small class="text-muted">${(file.size / 1024).toFixed(1)} KB</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // Upload images
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const fileInput = document.getElementById('fileInput');
+        const files = fileInput.files;
+        
+        if (files.length === 0) {
+            alert('Vui lòng chọn ảnh!');
+            return;
+        }
+
+        const formData = new FormData();
+        for (let file of files) {
+            formData.append('files', file);
+        }
+
+        try {
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang upload...';
+
+            const response = await fetch(`${API_URL}/api/upload/beverage-images`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert(`✅ Upload thành công ${result.count} ảnh!`);
+                uploadedImages.push(...result.images);
+                loadGallery();
+                fileInput.value = '';
+                document.getElementById('preview').innerHTML = '';
+            } else {
+                alert('❌ Lỗi: ' + result.message);
+            }
+        } catch (error) {
+            alert('❌ Lỗi upload: ' + error.message);
+        } finally {
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-upload"></i> Upload Ảnh';
+        }
+    });
+
+    // Load gallery
+    function loadGallery() {
+        const gallery = document.getElementById('gallery');
+        
+        if (uploadedImages.length === 0) {
+            gallery.innerHTML = `
+                <div class="col-12 text-center text-muted">
+                    <i class="bi bi-images" style="font-size: 3rem;"></i>
+                    <p>Chưa có ảnh nào được upload</p>
+                </div>
+            `;
+            return;
+        }
+
+        gallery.innerHTML = uploadedImages.map((img, index) => `
+            <div class="col-md-3">
+                <div class="card h-100 hover-shadow">
+                    <img src="${API_URL}${img.imageUrl}" class="card-img-top" 
+                         style="height: 200px; object-fit: cover; cursor: pointer;"
+                         onclick="viewImage('${API_URL}${img.imageUrl}', '${img.fileName}')">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted text-truncate">${img.fileName}</small>
+                            <button class="btn btn-sm btn-danger" onclick="confirmDelete('${img.fileName}', ${index})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        <small class="text-success d-block mt-1">
+                            <i class="bi bi-link-45deg"></i> 
+                            <a href="${API_URL}${img.imageUrl}" target="_blank">Xem</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // View image in modal
+    function viewImage(imageUrl, fileName) {
+        document.getElementById('modalImage').src = imageUrl;
+        currentImageFileName = fileName;
+        new bootstrap.Modal(document.getElementById('imageModal')).show();
+    }
+
+    // Delete image
+    document.getElementById('deleteImageBtn').addEventListener('click', async function() {
+        if (!currentImageFileName) return;
+        
+        if (!confirm('Bạn có chắc muốn xóa ảnh này?')) return;
+
+        try {
+            const response = await fetch(`${API_URL}/api/upload/beverage-image?fileName=${currentImageFileName}`, {
+                method: 'DELETE'
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('✅ Đã xóa ảnh!');
+                uploadedImages = uploadedImages.filter(img => img.fileName !== currentImageFileName);
+                loadGallery();
+                bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();
+            } else {
+                alert('❌ Lỗi: ' + result.message);
+            }
+        } catch (error) {
+            alert('❌ Lỗi xóa ảnh: ' + error.message);
+        }
+    });
+
+    function confirmDelete(fileName, index) {
+        if (!confirm('Xóa ảnh này?')) return;
+        
+        fetch(`${API_URL}/api/upload/beverage-image?fileName=${fileName}`, {
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                alert('✅ Đã xóa!');
+                uploadedImages.splice(index, 1);
+                loadGallery();
+            }
+        })
+        .catch(error => alert('❌ Lỗi: ' + error.message));
+    }
+
+    // Initial load
+    loadGallery();
+</script>
+
+<style>
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+    }
+</style>
+}
+

@@ -1,0 +1,164 @@
+@model List<BeverageShop.MVC.Models.Beverage>
+@{
+    ViewData["Title"] = "Quản Lý Sản Phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-cup-straw text-primary"></i> Quản Lý Sản Phẩm</h2>
+        <div>
+            <a asp-action="CreateBeverage" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Thêm sản phẩm mới
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Quay lại Dashboard
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow">
+        <div class="card-body">
+            @if (Model == null || Model.Count == 0)
+            {
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-inbox fs-3"></i>
+                    <p class="mb-0 mt-2">Chưa có sản phẩm nào trong hệ thống.</p>
+                    <a asp-action="CreateBeverage" class="btn btn-primary mt-3">
+                        <i class="bi bi-plus-circle"></i> Thêm sản phẩm đầu tiên
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 80px;">Ảnh</th>
+                                <th>Tên Sản Phẩm</th>
+                                <th>Danh Mục</th>
+                                <th>Loại</th>
+                                <th>Size</th>
+                                <th>Giá</th>
+                                <th>Tồn Kho</th>
+                                <th>Trạng Thái</th>
+                                <th class="text-center" style="width: 150px;">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="@item.ImageUrl" alt="@item.Name" class="img-thumbnail" 
+                                             style="width: 60px; height: 60px; object-fit: cover;"
+                                             onerror="this.src='https://via.placeholder.com/60?text=No+Image'" />
+                                    </td>
+                                    <td>
+                                        <strong>@item.Name</strong>
+                                        @if (!string.IsNullOrEmpty(item.Description))
+                                        {
+                                            <br />
+                                            <small class="text-muted">@(item.Description.Length > 50 ? item.Description.Substring(0, 50) + "..." : item.Description)</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@item.Category</span>
+                                    </td>
+                                    <td>@item.Type</td>
+                                    <td>
+                                        <span class="badge bg-secondary">Size @item.Size</span>
+                                    </td>
+                                    <td>
+                                        <strong class="text-primary">@item.Price.ToString("N0") ₫</strong>
+                                    </td>
+                                    <td>
+                                        @if (item.Stock > 10)
+                                        {
+                                            <span class="badge bg-success">@item.Stock</span>
+                                        }
+                                        else if (item.Stock > 0)
+                                        {
+                                            <span class="badge bg-warning text-dark">@item.Stock</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Hết hàng</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.IsAvailable)
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle"></i> Còn hàng
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-x-circle"></i> Ngừng bán
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="EditBeverage" asp-route-id="@item.Id" 
+                                               class="btn btn-outline-warning" title="Sửa">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-outline-danger" 
+                                                    onclick="confirmDelete(@item.Id, '@item.Name')" title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3">
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle"></i> Tổng cộng: <strong>@Model.Count</strong> sản phẩm
+                        | Còn hàng: <strong>@Model.Count(b => b.IsAvailable)</strong>
+                        | Hết hàng: <strong>@Model.Count(b => !b.IsAvailable)</strong>
+                    </p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for delete -->
+<form id="deleteForm" asp-action="DeleteBeverage" method="post" style="display: none;">
+    <input type="hidden" id="deleteId" name="id" />
+</form>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id, name) {
+            if (confirm('Bạn có chắc muốn xóa sản phẩm "' + name + '"?\n\nHành động này không thể hoàn tác!')) {
+                document.getElementById('deleteId').value = id;
+                document.getElementById('deleteForm').submit();
+            }
+        }
+    </script>
+}

@@ -1,0 +1,88 @@
+@model List<BeverageShop.MVC.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    var total = Model.Sum(c => c.TotalPrice);
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Giỏ hàng của bạn</h1>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tên đồ uống</th>
+                        <th>Loại</th>
+                        <th>Đơn giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Beverage.Name</td>
+                            <td>@item.Beverage.Type</td>
+                            <td>@item.Beverage.Price.ToString("N0") đ</td>
+                            <td>
+                                <form asp-action="UpdateCart" method="post" class="d-inline">
+                                    <input type="hidden" name="beverageId" value="@item.Beverage.Id" />
+                                    <input type="number" name="quantity" value="@item.Quantity" 
+                                           min="1" max="@item.Beverage.Stock" 
+                                           class="form-control form-control-sm d-inline-block" 
+                                           style="width: 80px;" />
+                                    <button type="submit" class="btn btn-sm btn-secondary">
+                                        <i class="bi bi-arrow-clockwise"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="fw-bold">@item.TotalPrice.ToString("N0") đ</td>
+                            <td>
+                                <form asp-action="RemoveFromCart" method="post" class="d-inline">
+                                    <input type="hidden" name="beverageId" value="@item.Beverage.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="table-light">
+                        <td colspan="4" class="text-end fw-bold">Tổng cộng:</td>
+                        <td colspan="2" class="fw-bold text-danger h5">@total.ToString("N0") đ</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
+                </a>
+                <a asp-action="Checkout" class="btn btn-success btn-lg float-end">
+                    <i class="bi bi-credit-card"></i> Thanh toán
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h4>Giỏ hàng trống</h4>
+            <p>Bạn chưa có sản phẩm nào trong giỏ hàng.</p>
+            <a asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-shop"></i> Đi mua sắm
+            </a>
+        </div>
+    }
+</div>
+
+

@@ -1,0 +1,205 @@
+@model List<BeverageShop.MVC.Models.Order>
+@{
+    ViewData["Title"] = "Quản Lý Đơn Hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-box-seam text-primary"></i> Quản Lý Đơn Hàng</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại Dashboard
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow">
+        <div class="card-body">
+            @if (Model == null || Model.Count == 0)
+            {
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-inbox fs-3"></i>
+                    <p class="mb-0 mt-2">Chưa có đơn hàng nào trong hệ thống.</p>
+                    <p class="text-muted mb-0">Đơn hàng sẽ xuất hiện khi khách hàng đặt hàng.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã ĐH</th>
+                                <th>Khách Hàng</th>
+                                <th>Ngày Đặt</th>
+                                <th>Tổng Tiền</th>
+                                <th>Giảm Giá</th>
+                                <th>Thanh Toán</th>
+                                <th>Trạng Thái</th>
+                                <th class="text-center">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.OrderByDescending(o => o.OrderDate))
+                            {
+                                <tr>
+                                    <td><strong>#@order.Id</strong></td>
+                                    <td>
+                                        <div>
+                                            <strong>@order.CustomerName</strong>
+                                            <br />
+                                            <small class="text-muted">@order.CustomerPhone</small>
+                                        </div>
+                                    </td>
+                                    <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        <strong class="text-primary">@order.TotalAmount.ToString("N0") ₫</strong>
+                                    </td>
+                                    <td>
+                                        @if (order.DiscountAmount > 0)
+                                        {
+                                            <span class="badge bg-success">
+                                                -@order.DiscountAmount.ToString("N0") ₫
+                                            </span>
+                                            @if (!string.IsNullOrEmpty(order.VoucherCode))
+                                            {
+                                                <br />
+                                                <small class="text-muted">@order.VoucherCode</small>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <strong>@((order.TotalAmount - order.DiscountAmount).ToString("N0")) ₫</strong>
+                                    </td>
+                                    <td>
+                                        @switch (order.Status)
+                                        {
+                                            case "Pending":
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="bi bi-clock"></i> Chờ xử lý
+                                                </span>
+                                                break;
+                                            case "Processing":
+                                                <span class="badge bg-info">
+                                                    <i class="bi bi-arrow-repeat"></i> Đang xử lý
+                                                </span>
+                                                break;
+                                            case "Shipping":
+                                                <span class="badge bg-primary">
+                                                    <i class="bi bi-truck"></i> Đang giao
+                                                </span>
+                                                break;
+                                            case "Completed":
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle"></i> Hoàn thành
+                                                </span>
+                                                break;
+                                            case "Cancelled":
+                                                <span class="badge bg-danger">
+                                                    <i class="bi bi-x-circle"></i> Đã hủy
+                                                </span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-secondary">@order.Status</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="OrderDetails" asp-route-id="@order.Id" 
+                                               class="btn btn-outline-primary" title="Xem chi tiết">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            @if (order.Status != "Completed" && order.Status != "Cancelled")
+                                            {
+                                                <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" 
+                                                        data-bs-toggle="dropdown" title="Cập nhật trạng thái">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    @if (order.Status == "Pending")
+                                                    {
+                                                        <li>
+                                                            <form asp-action="UpdateOrderStatus" method="post" class="d-inline">
+                                                                <input type="hidden" name="orderId" value="@order.Id" />
+                                                                <input type="hidden" name="status" value="Processing" />
+                                                                <button type="submit" class="dropdown-item">
+                                                                    <i class="bi bi-arrow-repeat text-info"></i> Xử lý đơn
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    }
+                                                    @if (order.Status == "Processing")
+                                                    {
+                                                        <li>
+                                                            <form asp-action="UpdateOrderStatus" method="post" class="d-inline">
+                                                                <input type="hidden" name="orderId" value="@order.Id" />
+                                                                <input type="hidden" name="status" value="Shipping" />
+                                                                <button type="submit" class="dropdown-item">
+                                                                    <i class="bi bi-truck text-primary"></i> Giao hàng
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    }
+                                                    @if (order.Status == "Shipping")
+                                                    {
+                                                        <li>
+                                                            <form asp-action="UpdateOrderStatus" method="post" class="d-inline">
+                                                                <input type="hidden" name="orderId" value="@order.Id" />
+                                                                <input type="hidden" name="status" value="Completed" />
+                                                                <button type="submit" class="dropdown-item">
+                                                                    <i class="bi bi-check-circle text-success"></i> Hoàn thành
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    }
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <form asp-action="UpdateOrderStatus" method="post" class="d-inline">
+                                                            <input type="hidden" name="orderId" value="@order.Id" />
+                                                            <input type="hidden" name="status" value="Cancelled" />
+                                                            <button type="submit" class="dropdown-item text-danger"
+                                                                    onclick="return confirm('Bạn có chắc muốn hủy đơn hàng #@order.Id?')">
+                                                                <i class="bi bi-x-circle"></i> Hủy đơn
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3 d-flex justify-content-between align-items-center">
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle"></i> Tổng cộng: <strong>@Model.Count</strong> đơn hàng
+                    </p>
+                    <div>
+                        <span class="me-3">
+                            Tổng doanh thu: 
+                            <strong class="text-success">
+                                @Model.Where(o => o.Status != "Cancelled")
+                                     .Sum(o => o.TotalAmount - o.DiscountAmount).ToString("N0") ₫
+                            </strong>
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

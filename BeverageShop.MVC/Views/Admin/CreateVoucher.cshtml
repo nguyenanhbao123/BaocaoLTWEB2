@@ -1,0 +1,190 @@
+@model BeverageShop.MVC.Models.Voucher
+
+@{
+    ViewData["Title"] = Model?.Id > 0 ? "Sửa mã giảm giá" : "Tạo mã giảm giá";
+    var isEdit = Model?.Id > 0;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-ticket-perforated"></i> @ViewData["Title"]
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    <form asp-action="@(isEdit ? "EditVoucher" : "CreateVoucher")" method="post">
+                        @if (isEdit)
+                        {
+                            <input type="hidden" asp-for="Id" />
+                            <input type="hidden" asp-for="UsedCount" />
+                            <input type="hidden" asp-for="CreatedDate" />
+                        }
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Mã voucher <span class="text-danger">*</span></label>
+                                <input asp-for="Code" class="form-control" placeholder="VD: WELCOME10" required 
+                                       style="text-transform: uppercase;" />
+                                <small class="text-muted">Chỉ dùng chữ cái và số, không khoảng trắng</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tên voucher <span class="text-danger">*</span></label>
+                                <input asp-for="Name" class="form-control" placeholder="VD: Chào mừng khách mới" required />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Mô tả</label>
+                            <textarea asp-for="Description" class="form-control" rows="2" 
+                                      placeholder="Mô tả chi tiết về voucher"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Loại giảm giá <span class="text-danger">*</span></label>
+                                <select asp-for="Type" class="form-select" onchange="toggleDiscountType()" id="voucherType">
+                                    <option value="0">Phần trăm (%)</option>
+                                    <option value="1">Số tiền cố định (đ)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Giá trị giảm <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input asp-for="DiscountValue" type="number" class="form-control" 
+                                           min="0" step="1" placeholder="VD: 10" required id="discountValue" />
+                                    <span class="input-group-text" id="discountUnit">%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" id="maxDiscountRow">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Giảm tối đa (khi dùng %)</label>
+                                <div class="input-group">
+                                    <input asp-for="MaxDiscountAmount" type="number" class="form-control" 
+                                           min="0" step="1000" placeholder="VD: 50000" />
+                                    <span class="input-group-text">đ</span>
+                                </div>
+                                <small class="text-muted">Để trống nếu không giới hạn</small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Đơn hàng tối thiểu <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input asp-for="MinimumOrderAmount" type="number" class="form-control" 
+                                           min="0" step="1000" placeholder="VD: 100000" required />
+                                    <span class="input-group-text">đ</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Số lượng sử dụng tối đa</label>
+                                <input asp-for="MaxUsageCount" type="number" class="form-control" 
+                                       min="0" placeholder="0 = Không giới hạn" />
+                                <small class="text-muted">0 = Không giới hạn</small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ngày bắt đầu <span class="text-danger">*</span></label>
+                                <input asp-for="StartDate" type="datetime-local" class="form-control" required />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ngày kết thúc <span class="text-danger">*</span></label>
+                                <input asp-for="EndDate" type="datetime-local" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+                                <label class="form-check-label">
+                                    Kích hoạt voucher
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Áp dụng cho sản phẩm (Tùy chọn)</label>
+                            <input asp-for="ApplicableBeverageIds" class="form-control" 
+                                   placeholder="VD: 1,2,3 (để trống = áp dụng tất cả)" />
+                            <small class="text-muted">Nhập ID sản phẩm, cách nhau bằng dấu phẩy</small>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="bi bi-check-circle"></i> @(isEdit ? "Cập nhật" : "Tạo voucher")
+                            </button>
+                            <a asp-action="Vouchers" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Hủy
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function toggleDiscountType() {
+        const type = document.getElementById('voucherType').value;
+        const unit = document.getElementById('discountUnit');
+        const maxRow = document.getElementById('maxDiscountRow');
+        
+        if (type === '0') { // Percentage
+            unit.textContent = '%';
+            maxRow.style.display = 'block';
+        } else { // Fixed
+            unit.textContent = 'đ';
+            maxRow.style.display = 'none';
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleDiscountType();
+        
+        // Set default dates if creating new
+        @if (!isEdit)
+        {
+            <text>
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const nextMonth = new Date(now);
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            
+            document.querySelector('[name="StartDate"]').value = formatDateTime(now);
+            document.querySelector('[name="EndDate"]').value = formatDateTime(nextMonth);
+            </text>
+        }
+    });
+
+    function formatDateTime(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+</script>
+}

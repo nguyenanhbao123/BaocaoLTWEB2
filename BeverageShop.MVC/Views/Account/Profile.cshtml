@@ -1,0 +1,65 @@
+@model BeverageShop.MVC.Models.User
+
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="bi bi-person-circle"></i> Thông tin cá nhân</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4"><strong>Tên đăng nhập:</strong></div>
+                        <div class="col-md-8">@Model.Username</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4"><strong>Họ và tên:</strong></div>
+                        <div class="col-md-8">@Model.FullName</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4"><strong>Email:</strong></div>
+                        <div class="col-md-8">@Model.Email</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4"><strong>Số điện thoại:</strong></div>
+                        <div class="col-md-8">@Model.Phone</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4"><strong>Địa chỉ:</strong></div>
+                        <div class="col-md-8">@Model.Address</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4"><strong>Vai trò:</strong></div>
+                        <div class="col-md-8">
+                            @if (Model.Role == BeverageShop.MVC.Models.UserRole.Admin)
+                            {
+                                <span class="badge bg-danger">Quản trị viên</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary">Khách hàng</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4"><strong>Ngày tạo:</strong></div>
+                        <div class="col-md-8">@Model.CreatedDate.ToString("dd/MM/yyyy")</div>
+                    </div>
+                    <hr>
+                    <div class="d-flex gap-2">
+                        <a asp-action="Orders" class="btn btn-primary">
+                            <i class="bi bi-box-seam"></i> Đơn hàng của tôi
+                        </a>
+                        <a asp-controller="Shop" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-shop"></i> Tiếp tục mua sắm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

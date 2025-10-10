@@ -1,0 +1,220 @@
+@model List<BeverageShop.MVC.Models.Voucher>
+
+@{
+    ViewData["Title"] = "Quản lý mã giảm giá";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-ticket-perforated"></i> Quản lý mã giảm giá</h1>
+        <a asp-action="CreateVoucher" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Tạo mã mới
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã</th>
+                                <th>Tên</th>
+                                <th>Loại</th>
+                                <th>Giá trị</th>
+                                <th>Đơn tối thiểu</th>
+                                <th>Số lượng</th>
+                                <th>Đã dùng</th>
+                                <th>Thời gian</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var voucher in Model)
+                            {
+                                var isExpired = voucher.EndDate < DateTime.Now;
+                                var isNotStarted = voucher.StartDate > DateTime.Now;
+                                var isMaxUsed = voucher.MaxUsageCount > 0 && voucher.UsedCount >= voucher.MaxUsageCount;
+                                
+                                <tr class="@(isExpired || isMaxUsed ? "table-secondary" : "")">
+                                    <td>
+                                        <strong class="text-primary">@voucher.Code</strong>
+                                    </td>
+                                    <td>@voucher.Name</td>
+                                    <td>
+                                        @if (voucher.Type == BeverageShop.MVC.Models.VoucherType.Percentage)
+                                        {
+                                            <span class="badge bg-info">
+                                                <i class="bi bi-percent"></i> Phần trăm
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-cash"></i> Cố định
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (voucher.Type == BeverageShop.MVC.Models.VoucherType.Percentage)
+                                        {
+                                            <strong>@voucher.DiscountValue%</strong>
+                                            @if (voucher.MaxDiscountAmount > 0)
+                                            {
+                                                <br /><small class="text-muted">Tối đa: @voucher.MaxDiscountAmount.ToString("N0")đ</small>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <strong>@voucher.DiscountValue.ToString("N0")đ</strong>
+                                        }
+                                    </td>
+                                    <td>@voucher.MinimumOrderAmount.ToString("N0")đ</td>
+                                    <td>
+                                        @if (voucher.MaxUsageCount == 0)
+                                        {
+                                            <span class="text-success">
+                                                <i class="bi bi-infinity"></i> Không giới hạn
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>@voucher.MaxUsageCount</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <strong>@voucher.UsedCount</strong>
+                                        @if (isMaxUsed)
+                                        {
+                                            <br /><span class="badge bg-danger">Đã hết lượt</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <small>
+                                            <div>
+                                                <i class="bi bi-calendar-check"></i> 
+                                                @voucher.StartDate.ToString("dd/MM/yyyy")
+                                            </div>
+                                            <div>
+                                                <i class="bi bi-calendar-x"></i> 
+                                                @voucher.EndDate.ToString("dd/MM/yyyy")
+                                            </div>
+                                            @if (isNotStarted)
+                                            {
+                                                <span class="badge bg-info">Chưa bắt đầu</span>
+                                            }
+                                            else if (isExpired)
+                                            {
+                                                <span class="badge bg-danger">Đã hết hạn</span>
+                                            }
+                                            else
+                                            {
+                                                var daysLeft = (voucher.EndDate - DateTime.Now).Days;
+                                                <span class="badge bg-success">Còn @daysLeft ngày</span>
+                                            }
+                                        </small>
+                                    </td>
+                                    <td>
+                                        @if (voucher.IsActive)
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle"></i> Hoạt động
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-x-circle"></i> Vô hiệu
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="EditVoucher" asp-route-id="@voucher.Id" 
+                                               class="btn btn-outline-primary" title="Sửa">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-outline-danger" 
+                                                    onclick="confirmDelete(@voucher.Id, '@voucher.Code')" title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-ticket-perforated" style="font-size: 4rem; color: #ccc;"></i>
+                    <h4 class="mt-3">Chưa có mã giảm giá</h4>
+                    <p class="text-muted">Tạo mã giảm giá đầu tiên để thu hút khách hàng</p>
+                    <a asp-action="CreateVoucher" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Tạo mã ngay
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn xóa voucher <strong id="voucherCode"></strong>?</p>
+                <p class="text-danger"><i class="bi bi-exclamation-triangle"></i> Hành động này không thể hoàn tác!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <form id="deleteForm" asp-action="DeleteVoucher" method="post" class="d-inline">
+                    <input type="hidden" id="deleteId" name="id" value="" />
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function confirmDelete(id, code) {
+        document.getElementById('voucherCode').textContent = code;
+        document.getElementById('deleteId').value = id;
+        var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    }
+</script>
+}

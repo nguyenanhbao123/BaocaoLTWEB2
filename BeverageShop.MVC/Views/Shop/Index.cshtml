@@ -1,0 +1,488 @@
+@model IEnumerable<BeverageShop.MVC.Models.Beverage>
+
+@{
+    ViewData["Title"] = "Cửa Hàng Đồ Uống";
+    var categories = ViewBag.Categories as List<BeverageShop.MVC.Models.Category>;
+    var selectedCategory = ViewBag.SelectedCategory as string;
+    var userJson = Context.Session.GetString("CurrentUser");
+    int? userId = null;
+    if (!string.IsNullOrEmpty(userJson))
+    {
+        var user = System.Text.Json.JsonSerializer.Deserialize<BeverageShop.MVC.Models.User>(userJson);
+        userId = user?.Id;
+    }
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Filter Sidebar -->
+        <div class="col-lg-3">
+            <div class="filter-sidebar" id="filterSidebar">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5><i class="bi bi-funnel"></i> Bộ lọc</h5>
+                    <button class="btn btn-sm btn-outline-secondary d-lg-none" onclick="closeFilterSidebar()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Price Range -->
+                <div class="filter-section">
+                    <label class="fw-bold">Giá (VNĐ)</label>
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <input type="number" id="minPrice" class="form-control form-control-sm" placeholder="Từ" min="0" step="100000">
+                        </div>
+                        <div class="col-6">
+                            <input type="number" id="maxPrice" class="form-control form-control-sm" placeholder="Đến" min="0" step="100000">
+                        </div>
+                    </div>
+                    <input type="range" id="priceRange" class="form-range" min="0" max="20000000" step="100000" value="20000000">
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span id="minPriceLabel">0đ</span>
+                        <span id="maxPriceLabel">20tr</span>
+                    </div>
+                </div>
+
+                <!-- Age Range -->
+                <div class="filter-section">
+                    <label class="fw-bold">Tuổi</label>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <select id="minAge" class="form-select form-select-sm">
+                                <option value="">Từ</option>
+                                <option value="0">0 tuổi</option>
+                                <option value="1">1 tuổi</option>
+                                <option value="2">2 tuổi</option>
+                                <option value="3">3 tuổi</option>
+                                <option value="4">4 tuổi</option>
+                                <option value="5">5 tuổi+</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <select id="maxAge" class="form-select form-select-sm">
+                                <option value="">Đến</option>
+                                <option value="1">1 tuổi</option>
+                                <option value="2">2 tuổi</option>
+                                <option value="3">3 tuổi</option>
+                                <option value="5">5 tuổi</option>
+                                <option value="10">10 tuổi+</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sort -->
+                <div class="filter-section">
+                    <label class="fw-bold">Sắp xếp</label>
+                    <select id="sortBy" class="form-select form-select-sm">
+                        <option value="name-asc">Tên A-Z</option>
+                        <option value="name-desc">Tên Z-A</option>
+                        <option value="price-asc">Giá thấp → cao</option>
+                        <option value="price-desc">Giá cao → thấp</option>
+                        <option value="date-desc">Mới nhất</option>
+                        <option value="age-asc">Trẻ nhất</option>
+                    </select>
+                </div>
+
+                <!-- Action Buttons -->
+                <button class="btn btn-primary w-100 mb-2" onclick="applyFilters()">
+                    <i class="bi bi-check-circle"></i> Áp dụng
+                </button>
+                <button class="btn btn-outline-secondary w-100" onclick="resetFilters()">
+                    <i class="bi bi-arrow-clockwise"></i> Đặt lại
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Header with Search and Filter Toggle -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Cửa hàng đồ uống</h1>
+                <button class="btn btn-outline-primary d-lg-none" onclick="openFilterSidebar()">
+                    <i class="bi bi-funnel"></i> Bộ lọc
+                </button>
+            </div>
+
+            <!-- Search Form -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" id="searchKeyword" class="form-control" placeholder="Tìm kiếm đồ uống..." />
+                        <button class="btn btn-primary" onclick="searchBeverages()">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Pills -->
+            <div class="mb-4">
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="filter-pill active" data-category="" onclick="selectCategory(this, '')">
+                        Tất cả
+                    </button>
+                    @if (categories != null)
+                    {
+                        @foreach (var category in categories)
+                        {
+                            <button class="filter-pill" data-category="@category.Name" onclick="selectCategory(this, '@category.Name')">
+                                @category.Name
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- Results Count -->
+            <div class="mb-3">
+                <small class="text-muted" id="resultsCount">Hiển thị @Model.Count() kết quả</small>
+            </div>
+
+            <!-- Animal List -->
+            <div class="row" id="beverageList">
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var beverage in Model)
+                    {
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card product-card h-100">
+                                <div class="position-relative">
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                                    </div>
+                                    @if (userId.HasValue)
+                                    {
+                                        <button class="btn btn-sm btn-wishlist position-absolute top-0 end-0 m-2" 
+                                                onclick="toggleWishlist(@beverage.Id, this)" 
+                                                data-beverage-id="@beverage.Id"
+                                                title="Thêm vào yêu thích">
+                                            <i class="bi bi-heart"></i>
+                                        </button>
+                                    }
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">@beverage.Name</h5>
+                                    <p class="card-text small">
+                                        <span class="badge bg-secondary">@beverage.Type</span>
+                                        <span class="badge bg-info">@beverage.Size</span>
+                                    </p>
+                                    <p class="card-text text-truncate" style="max-height: 3em;">@beverage.Description</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-danger fw-bold fs-5">@beverage.Price.ToString("N0")đ</span>
+                                        @if (beverage.IsAvailable && beverage.Stock > 0)
+                                        {
+                                            <span class="badge bg-success">Còn @beverage.Stock</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Hết hàng</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="card-footer d-flex gap-2">
+                                    <a asp-action="Details" asp-route-id="@beverage.Id" class="btn btn-outline-info btn-sm flex-fill">
+                                        <i class="bi bi-info-circle"></i> Chi tiết
+                                    </a>
+                                    @if (beverage.IsAvailable && beverage.Stock > 0)
+                                    {
+                                        <form asp-action="AddToCart" method="post" class="flex-fill">
+                                            <input type="hidden" name="beverageId" value="@beverage.Id" />
+                                            <input type="hidden" name="quantity" value="1" />
+                                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                <i class="bi bi-cart-plus"></i> Giỏ hàng
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Không tìm thấy đồ uống nào.
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Overlay for Mobile -->
+<div class="filter-overlay" id="filterOverlay" onclick="closeFilterSidebar()"></div>
+
+@section Scripts {
+<script>
+    const API_URL = 'http://localhost:5000';
+    const userId = @(userId.HasValue ? userId.Value.ToString() : "null");
+    let currentCategory = '';
+
+    // Load wishlist status on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (userId) {
+            await loadWishlistStatus();
+        }
+        
+        // Setup price range slider
+        const priceRange = document.getElementById('priceRange');
+        const maxPriceInput = document.getElementById('maxPrice');
+        const maxPriceLabel = document.getElementById('maxPriceLabel');
+        
+        priceRange.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            maxPriceInput.value = value;
+            maxPriceLabel.textContent = formatPrice(value);
+        });
+        
+        maxPriceInput.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            priceRange.value = value;
+            maxPriceLabel.textContent = formatPrice(value);
+        });
+    });
+
+    // Wishlist Functions
+    async function loadWishlistStatus() {
+        try {
+            const response = await fetch(`${API_URL}/api/wishlist/user/${userId}`);
+            if (response.ok) {
+                const wishlist = await response.json();
+                wishlist.forEach(item => {
+                    const btn = document.querySelector(`[data-beverage-id="${item.animalId}"]`);
+                    if (btn) {
+                        btn.classList.add('active');
+                        btn.querySelector('i').classList.remove('bi-heart');
+                        btn.querySelector('i').classList.add('bi-heart-fill');
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error loading wishlist:', error);
+        }
+    }
+
+    async function toggleWishlist(animalId, button) {
+        if (!userId) {
+            alert('Vui lòng đăng nhập để sử dụng wishlist!');
+            window.location.href = '/Account/Login';
+            return;
+        }
+
+        const isActive = button.classList.contains('active');
+        const icon = button.querySelector('i');
+
+        try {
+            if (isActive) {
+                // Remove from wishlist
+                const response = await fetch(`${API_URL}/api/wishlist/user/${userId}/animal/${animalId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    button.classList.remove('active');
+                    icon.classList.remove('bi-heart-fill');
+                    icon.classList.add('bi-heart');
+                    showToast('Đã xóa khỏi yêu thích');
+                }
+            } else {
+                // Add to wishlist
+                const response = await fetch(`${API_URL}/api/wishlist`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, animalId })
+                });
+                
+                if (response.ok) {
+                    button.classList.add('active');
+                    icon.classList.remove('bi-heart');
+                    icon.classList.add('bi-heart-fill');
+                    showToast('Đã thêm vào yêu thích!');
+                } else if (response.status === 400) {
+                    showToast('Đã có trong wishlist rồi!', 'warning');
+                }
+            }
+        } catch (error) {
+            console.error('Error toggling wishlist:', error);
+            showToast('Có lỗi xảy ra!', 'error');
+        }
+    }
+
+    // Filter Functions
+    function selectCategory(button, category) {
+        document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        currentCategory = category;
+        applyFilters();
+    }
+
+    async function applyFilters() {
+        const params = new URLSearchParams();
+        
+        if (currentCategory) params.append('category', currentCategory);
+        
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        if (minPrice) params.append('minPrice', minPrice);
+        if (maxPrice) params.append('maxPrice', maxPrice);
+        
+        const minAge = document.getElementById('minAge').value;
+        const maxAge = document.getElementById('maxAge').value;
+        if (minAge) params.append('minAge', minAge);
+        if (maxAge) params.append('maxAge', maxAge);
+        
+        const keyword = document.getElementById('searchKeyword').value;
+        if (keyword) params.append('keyword', keyword);
+        
+        const sortBy = document.getElementById('sortBy').value;
+        const [sortField, sortOrder] = sortBy.split('-');
+        params.append('sortBy', sortField);
+        params.append('order', sortOrder);
+        
+        try {
+            const response = await fetch(`${API_URL}/api/beverages/filter?${params}`);
+            const beverages = await response.json();
+            
+            renderBeverages(beverages);
+            closeFilterSidebar();
+        } catch (error) {
+            console.error('Error applying filters:', error);
+            showToast('Có lỗi khi lọc dữ liệu!', 'error');
+        }
+    }
+
+    function resetFilters() {
+        document.getElementById('minPrice').value = '';
+        document.getElementById('maxPrice').value = '';
+        document.getElementById('priceRange').value = 20000000;
+        document.getElementById('maxPriceLabel').textContent = '20tr';
+        document.getElementById('minAge').value = '';
+        document.getElementById('maxAge').value = '';
+        document.getElementById('sortBy').value = 'name-asc';
+        document.getElementById('searchKeyword').value = '';
+        
+        document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('.filter-pill[data-category=""]').classList.add('active');
+        currentCategory = '';
+        
+        applyFilters();
+    }
+
+    async function searchBeverages() {
+        applyFilters();
+    }
+
+    function renderBeverages(beverages) {
+        const container = document.getElementById('beverageList');
+        const resultsCount = document.getElementById('resultsCount');
+        
+        resultsCount.textContent = `Hiển thị ${ beverages.length} kết quả`;
+        
+        if (beverages.length === 0) {
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Không tìm thấy đồ uống nào phù hợp.
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = beverages.map(animal => `
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card product-card h-100">
+                    <div class="position-relative">
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                        </div>
+                        ${userId ? `
+                            <button class="btn btn-sm btn-wishlist position-absolute top-0 end-0 m-2" 
+                                    onclick="toggleWishlist(${beverage.id}, this)" 
+                                    data-beverage-id="${beverage.id}"
+                                    title="Thêm vào yêu thích">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">${beverage.name}</h5>
+                        <p class="card-text small">
+                            <span class="badge bg-secondary">${beverage\.Type}</span>
+                            <span class="badge bg-info">${beverage\.Size} tuổi</span>
+                        </p>
+                        <p class="card-text text-truncate" style="max-height: 3em;">${beverage.description}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-danger fw-bold fs-5">${beverage.price.toLocaleString()}đ</span>
+                            ${beverage.isAvailable && animal.stock > 0 
+                                ? `<span class="badge bg-success">Còn ${beverage.stock}</span>`
+                                : `<span class="badge bg-danger">Hết hàng</span>`
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex gap-2">
+                        <a href="/Shop/Details/${beverage.id}" class="btn btn-outline-info btn-sm flex-fill">
+                            <i class="bi bi-info-circle"></i> Chi tiết
+                        </a>
+                        ${beverage.isAvailable && animal.stock > 0 ? `
+                            <form action="/Shop/AddToCart" method="post" class="flex-fill">
+                                <input type="hidden" name="beverageId" value="${beverage.id}" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                    <i class="bi bi-cart-plus"></i> Giỏ hàng
+                                </button>
+                            </form>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        // Reload wishlist status
+        if (userId) {
+            loadWishlistStatus();
+        }
+    }
+
+    // Mobile Filter Sidebar
+    function openFilterSidebar() {
+        document.getElementById('filterSidebar').classList.add('show');
+        document.getElementById('filterOverlay').classList.add('show');
+    }
+
+    function closeFilterSidebar() {
+        document.getElementById('filterSidebar').classList.remove('show');
+        document.getElementById('filterOverlay').classList.remove('show');
+    }
+
+    // Utility Functions
+    function formatPrice(value) {
+        if (value >= 1000000) {
+            return (value / 1000000).toFixed(0) + 'tr';
+        } else if (value >= 1000) {
+            return (value / 1000).toFixed(0) + 'k';
+        }
+        return value + 'đ';
+    }
+
+    function showToast(message, type = 'success') {
+        // Simple toast notification
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'success'} position-fixed top-0 end-0 m-3`;
+        toast.style.zIndex = '9999';
+        toast.innerHTML = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.remove(), 3000);
+    }
+</script>
+}
+
+
+
+
+
+

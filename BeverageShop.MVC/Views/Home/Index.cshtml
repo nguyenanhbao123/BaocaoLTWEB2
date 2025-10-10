@@ -1,0 +1,460 @@
+@{
+    ViewData["Title"] = "BeverageShop - Cửa hàng đồ uống chính hãng";
+}
+
+<!-- Top Banner -->
+<div class="top-banner py-2 text-center" style="background: linear-gradient(135deg, #d63031 0%, #e17055 100%); color: white;">
+    <div class="d-flex justify-content-center align-items-center gap-4 flex-wrap">
+        <span><i class="bi bi-truck"></i> Miễn phí giao hàng đơn từ 300K</span>
+        <span><i class="bi bi-shield-check"></i> Chính hãng 100%</span>
+        <span><i class="bi bi-headset"></i> Hotline: 1800.2097</span>
+    </div>
+</div>
+
+<!-- Main Hero Slider -->
+<div id="heroCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+    </div>
+    <div class="carousel-inner rounded-3 shadow">
+        <div class="carousel-item active">
+            <div class="hero-slide" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 400px; display: flex; align-items: center;">
+                <div class="container text-white text-center">
+                    <h1 class="display-4 fw-bold mb-3">🍹 KHAI TRƯƠNG MÙA HÈ</h1>
+                    <p class="lead mb-4">Giảm giá lên đến 50% - Freeship toàn quốc</p>
+                    <a href="/Shop/Index" class="btn btn-light btn-lg px-5">Mua Ngay</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="hero-slide" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); min-height: 400px; display: flex; align-items: center;">
+                <div class="container text-white text-center">
+                    <h1 class="display-4 fw-bold mb-3">☕ CAFE CAO CẤP</h1>
+                    <p class="lead mb-4">Nhập khẩu trực tiếp - Ưu đãi đến 50%</p>
+                    <a asp-controller="Shop" asp-action="Index" asp-route-category="Cà phê" class="btn btn-light btn-lg px-5">Khám Phá</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="hero-slide" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); min-height: 400px; display: flex; align-items: center;">
+                <div class="container text-white text-center">
+                    <h1 class="display-4 fw-bold mb-3">🥤 TRÀ SỮA ĐẶC BIỆT</h1>
+                    <p class="lead mb-4">Mua 1 tặng 1 - Miễn phí ship</p>
+                    <a href="/Shop/Index?category=Trà" class="btn btn-light btn-lg px-5">Đặt Ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<!-- Quick Promo Banners -->
+<div class="row g-3 mb-5">
+    <div class="col-md-4">
+        <div class="promo-card p-4 rounded-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer;">
+            <h5 class="fw-bold">🎁 QUÀ TẶNG MIỄN PHÍ</h5>
+            <p class="mb-0 small">Cho đơn hàng đầu tiên</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="promo-card p-4 rounded-3 text-white" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); cursor: pointer;">
+            <h5 class="fw-bold">⚡ FLASH SALE</h5>
+            <p class="mb-0 small">Giảm ngay 500K</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="promo-card p-4 rounded-3 text-white" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); cursor: pointer;">
+            <h5 class="fw-bold">💳 TRẢ GÓP 0%</h5>
+            <p class="mb-0 small">Lãi suất 0% - Duyệt nhanh</p>
+        </div>
+    </div>
+</div>
+
+<!-- Product Categories Section -->
+<section class="category-section mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">☕ CÀ PHÊ & ESPRESSO</h2>
+        <a asp-controller="Shop" asp-action="Index" asp-route-category="Cà phê" class="btn btn-outline-primary">Xem tất cả</a>
+    </div>
+    
+    <!-- Brand Filter -->
+    <div class="brand-filter mb-3 d-flex gap-2 flex-wrap">
+        <a href="/Shop/Index?brand=Trung Nguyên" class="badge bg-light text-dark px-3 py-2">Trung Nguyên</a>
+        <a href="/Shop/Index?brand=Highlands" class="badge bg-light text-dark px-3 py-2">Highlands</a>
+        <a href="/Shop/Index?brand=Nescafe" class="badge bg-light text-dark px-3 py-2">Nescafe</a>
+        <a href="/Shop/Index?brand=Lavazza" class="badge bg-light text-dark px-3 py-2">Lavazza</a>
+        <a href="/Shop/Index?brand=Starbucks" class="badge bg-light text-dark px-3 py-2">Starbucks</a>
+    </div>
+    
+    <div class="row g-3">
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <div class="position-relative">
+                    <img src="https://via.placeholder.com/200x200?text=Cafe" class="card-img-top" alt="Product">
+                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">-30%</span>
+                </div>
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Cà phê Trung Nguyên Legend</h6>
+                    <p class="text-danger fw-bold mb-0">299.000đ</p>
+                    <p class="text-muted small text-decoration-line-through mb-1">450.000đ</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <div class="position-relative">
+                    <img src="https://via.placeholder.com/200x200?text=Espresso" class="card-img-top" alt="Product">
+                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">-25%</span>
+                </div>
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Highlands Espresso</h6>
+                    <p class="text-danger fw-bold mb-0">189.000đ</p>
+                    <p class="text-muted small text-decoration-line-through mb-1">250.000đ</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <img src="https://via.placeholder.com/200x200?text=Nescafe" class="card-img-top" alt="Product">
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Nescafe Classic</h6>
+                    <p class="text-danger fw-bold mb-0">159.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <img src="https://via.placeholder.com/200x200?text=Lavazza" class="card-img-top" alt="Product">
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Lavazza Premium</h6>
+                    <p class="text-danger fw-bold mb-0">399.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <img src="https://via.placeholder.com/200x200?text=Starbucks" class="card-img-top" alt="Product">
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Starbucks Pike Place</h6>
+                    <p class="text-danger fw-bold mb-0">349.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-half text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <img src="https://via.placeholder.com/200x200?text=G7" class="card-img-top" alt="Product">
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">G7 3in1 Cappuccino</h6>
+                    <p class="text-danger fw-bold mb-0">129.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Accessories Banner -->
+<div class="row g-3 mb-5">
+    <div class="col-md-12">
+        <div class="accessory-banner p-5 rounded-3 text-center" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
+            <h3 class="fw-bold mb-3">🎁 PHỤ KIỆN TRÀ - CAFE CHẤT LƯỢNG</h3>
+            <p class="mb-3">Ly, ống hút, máy pha - Giảm giá đến 40%</p>
+            <a href="/Shop/Index?category=Phụ kiện" class="btn btn-light btn-lg">Xem tất cả</a>
+        </div>
+    </div>
+</div>
+
+<!-- Tea Category -->
+<section class="category-section mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">🍵 TRÀ & TRÀ SỮA</h2>
+        <a href="/Shop/Index?category=Trà" class="btn btn-outline-primary">Xem tất cả</a>
+    </div>
+    
+    <div class="brand-filter mb-3 d-flex gap-2 flex-wrap">
+        <a href="/Shop/Index?brand=Lipton" class="badge bg-light text-dark px-3 py-2">Lipton</a>
+        <a href="/Shop/Index?brand=Cozy" class="badge bg-light text-dark px-3 py-2">Cozy</a>
+        <a href="/Shop/Index?brand=Dilmah" class="badge bg-light text-dark px-3 py-2">Dilmah</a>
+        <a href="/Shop/Index?brand=Phúc Long" class="badge bg-light text-dark px-3 py-2">Phúc Long</a>
+        <a href="/Shop/Index?brand=Oolong Tea" class="badge bg-light text-dark px-3 py-2">Oolong Tea</a>
+    </div>
+    
+    <div class="row g-3">
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <div class="position-relative">
+                    <img src="https://via.placeholder.com/200x200?text=Tra+Oolong" class="card-img-top" alt="Product">
+                    <span class="badge bg-success position-absolute top-0 start-0 m-2">NEW</span>
+                </div>
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Trà Oolong Cao Cấp</h6>
+                    <p class="text-danger fw-bold mb-0">249.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <img src="https://via.placeholder.com/200x200?text=Lipton" class="card-img-top" alt="Product">
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Lipton Yellow Label</h6>
+                    <p class="text-danger fw-bold mb-0">89.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <img src="https://via.placeholder.com/200x200?text=Phuc+Long" class="card-img-top" alt="Product">
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Phúc Long Oolong</h6>
+                    <p class="text-danger fw-bold mb-0">199.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <img src="https://via.placeholder.com/200x200?text=Dilmah" class="card-img-top" alt="Product">
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Dilmah Earl Grey</h6>
+                    <p class="text-danger fw-bold mb-0">149.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-half text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <img src="https://via.placeholder.com/200x200?text=Cozy" class="card-img-top" alt="Product">
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Cozy Trà Sữa</h6>
+                    <p class="text-danger fw-bold mb-0">69.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <div class="position-relative">
+                    <img src="https://via.placeholder.com/200x200?text=Tra+Xanh" class="card-img-top" alt="Product">
+                    <span class="badge bg-info position-absolute top-0 start-0 m-2">HOT</span>
+                </div>
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Trà Xanh Matcha</h6>
+                    <p class="text-danger fw-bold mb-0">179.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Juice & Smoothie Category -->
+<section class="category-section mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">🥤 NƯỚC ÉP & SINH TỐ</h2>
+        <a href="/Shop/Index?category=Nước ép" class="btn btn-outline-primary">Xem tất cả</a>
+    </div>
+    
+    <div class="brand-filter mb-3 d-flex gap-2 flex-wrap">
+        <a href="/Shop/Index?brand=Tropicana" class="badge bg-light text-dark px-3 py-2">Tropicana</a>
+        <a href="/Shop/Index?brand=Minute Maid" class="badge bg-light text-dark px-3 py-2">Minute Maid</a>
+        <a href="/Shop/Index?brand=Twister" class="badge bg-light text-dark px-3 py-2">Twister</a>
+        <a href="/Shop/Index?brand=Vinamilk" class="badge bg-light text-dark px-3 py-2">Vinamilk</a>
+    </div>
+    
+    <div class="row g-3">
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <img src="https://via.placeholder.com/200x200?text=Tropicana" class="card-img-top" alt="Product">
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Tropicana Cam</h6>
+                    <p class="text-danger fw-bold mb-0">35.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <img src="https://via.placeholder.com/200x200?text=Minute+Maid" class="card-img-top" alt="Product">
+                <div class="card-body p-2">
+                    <h6 class="card-title small fw-bold mb-1">Minute Maid Pulpy</h6>
+                    <p class="text-danger fw-bold mb-0">29.000đ</p>
+                    <p class="text-muted small mb-1">&nbsp;</p>
+                    <div class="d-flex gap-1">
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-fill text-warning small"></i>
+                        <i class="bi bi-star-half text-warning small"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3 col-6">
+        <div class="feature-card text-center p-4 border rounded-3">
+            <div class="mb-3" style="font-size: 3rem;">🚚</div>
+            <h6 class="fw-bold">Giao hàng miễn phí</h6>
+            <p class="text-muted small mb-0">Cho đơn từ 300K</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="feature-card text-center p-4 border rounded-3">
+            <div class="mb-3" style="font-size: 3rem;">✅</div>
+            <h6 class="fw-bold">Sản phẩm chính hãng</h6>
+            <p class="text-muted small mb-0">Xuất VAT đầy đủ</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="feature-card text-center p-4 border rounded-3">
+            <div class="mb-3" style="font-size: 3rem;">💰</div>
+            <h6 class="fw-bold">Giá tốt nhất</h6>
+            <p class="text-muted small mb-0">Hoàn tiền nếu rẻ hơn</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="feature-card text-center p-4 border rounded-3">
+            <div class="mb-3" style="font-size: 3rem;">📞</div>
+            <h6 class="fw-bold">Hotline 1800.2097</h6>
+            <p class="text-muted small mb-0">Hỗ trợ 7:30 - 22:00</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .promo-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .promo-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    }
+    .brand-filter a {
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    .brand-filter a:hover {
+        background-color: #0d6efd !important;
+        color: white !important;
+    }
+    .feature-card {
+        transition: all 0.3s ease;
+    }
+    .feature-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-3px);
+    }

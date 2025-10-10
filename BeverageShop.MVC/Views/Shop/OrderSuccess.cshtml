@@ -1,0 +1,91 @@
+@model BeverageShop.MVC.Models.Order
+
+@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white text-center">
+                    <h3><i class="bi bi-check-circle-fill"></i> Đặt hàng thành công!</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <h5>Cảm ơn bạn đã đặt hàng!</h5>
+                        <p>Đơn hàng của bạn đã được tiếp nhận. Chúng tôi sẽ liên hệ với bạn sớm nhất.</p>
+                    </div>
+
+                    <h5>Thông tin đơn hàng</h5>
+                    <hr />
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Mã đơn hàng:</strong></div>
+                        <div class="col-8">#@Model.Id</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Khách hàng:</strong></div>
+                        <div class="col-8">@Model.CustomerName</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Email:</strong></div>
+                        <div class="col-8">@Model.CustomerEmail</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Số điện thoại:</strong></div>
+                        <div class="col-8">@Model.CustomerPhone</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Địa chỉ giao hàng:</strong></div>
+                        <div class="col-8">@Model.ShippingAddress</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Ngày đặt:</strong></div>
+                        <div class="col-8">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Trạng thái:</strong></div>
+                        <div class="col-8"><span class="badge bg-warning">@Model.Status</span></div>
+                    </div>
+
+                    <h5 class="mt-4">Chi tiết đơn hàng</h5>
+                    <hr />
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-end">Đơn giá</th>
+                                <th class="text-end">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td>@item.BeverageName</td>
+                                    <td class="text-center">@item.Quantity</td>
+                                    <td class="text-end">@item.Price.ToString("N0") đ</td>
+                                    <td class="text-end">@((item.Price * item.Quantity).ToString("N0")) đ</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-light">
+                                <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
+                                <td class="text-end fw-bold text-danger h5">@Model.TotalAmount.ToString("N0") đ</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="text-center mt-4">
+                        <a asp-action="Index" class="btn btn-primary btn-lg">
+                            <i class="bi bi-shop"></i> Tiếp tục mua sắm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

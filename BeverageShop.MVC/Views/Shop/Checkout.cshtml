@@ -1,0 +1,264 @@
+@model List<BeverageShop.MVC.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Thanh toán";
+    var total = Model.Sum(c => c.TotalPrice);
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Thanh toán đơn hàng</h1>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Thông tin khách hàng</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+
+                    <form asp-action="PlaceOrder" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                            <input type="text" name="customerName" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" name="customerEmail" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                            <input type="tel" name="customerPhone" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                            <textarea name="shippingAddress" class="form-control" rows="3" required></textarea>
+                        </div>
+
+                        <input type="hidden" id="appliedVoucherCode" name="voucherCode" value="" />
+                        <input type="hidden" id="discountAmount" name="discountAmount" value="0" />
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Xác nhận đặt hàng
+                            </button>
+                            <a asp-action="Cart" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Quay lại giỏ hàng
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5><i class="bi bi-ticket-perforated"></i> Mã giảm giá</h5>
+                </div>
+                <div class="card-body">
+                    <div class="input-group mb-2">
+                        <input type="text" id="voucherInput" class="form-control" placeholder="Nhập mã giảm giá" />
+                        <button class="btn btn-primary" onclick="applyVoucher()" id="applyVoucherBtn">
+                            <i class="bi bi-check-lg"></i> Áp dụng
+                        </button>
+                    </div>
+                    <div id="voucherMessage"></div>
+                    <div id="voucherInfo" style="display: none;" class="alert alert-success mt-2 mb-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong id="voucherName"></strong>
+                                <p class="mb-0 small" id="voucherDescription"></p>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger" onclick="removeVoucher()">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <strong>Gợi ý:</strong> WELCOME10, FREESHIP, DRINK15
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5>Đơn hàng của bạn</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th class="text-end">SL</th>
+                                <th class="text-end">Giá</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Beverage.Name</td>
+                                    <td class="text-end">@item.Quantity</td>
+                                    <td class="text-end">@item.TotalPrice.ToString("N0") đ</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">Tạm tính:</td>
+                                <td class="text-end" id="subtotal">@total.ToString("N0") đ</td>
+                            </tr>
+                            <tr id="discountRow" style="display: none;">
+                                <td colspan="2" class="text-success">
+                                    <i class="bi bi-ticket-perforated"></i> Giảm giá:
+                                </td>
+                                <td class="text-end text-success" id="discountValue">0 đ</td>
+                            </tr>
+                            <tr class="table-light">
+                                <td colspan="2" class="fw-bold">Tổng cộng:</td>
+                                <td class="text-end fw-bold text-danger" id="finalTotal">@total.ToString("N0") đ</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const API_URL = 'http://localhost:5000';
+    const subtotal = @total;
+    let appliedVoucher = null;
+
+    async function applyVoucher() {
+        const voucherCode = document.getElementById('voucherInput').value.trim();
+        
+        if (!voucherCode) {
+            showVoucherMessage('Vui lòng nhập mã giảm giá', 'warning');
+            return;
+        }
+
+        document.getElementById('applyVoucherBtn').disabled = true;
+        document.getElementById('applyVoucherBtn').innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        try {
+            const response = await fetch(`${API_URL}/api/voucher/validate/${voucherCode}?orderAmount=${subtotal}`);
+            
+            if (response.ok) {
+                const voucher = await response.json();
+                
+                if (!voucher.isActive) {
+                    showVoucherMessage('Mã giảm giá không còn hiệu lực', 'danger');
+                    return;
+                }
+
+                appliedVoucher = voucher;
+                calculateDiscount();
+                displayVoucherInfo(voucher);
+                showVoucherMessage('Áp dụng mã giảm giá thành công!', 'success');
+                
+                document.getElementById('appliedVoucherCode').value = voucherCode;
+            } else {
+                const error = await response.text();
+                showVoucherMessage(error || 'Mã giảm giá không hợp lệ', 'danger');
+            }
+        } catch (error) {
+            console.error('Error validating voucher:', error);
+            showVoucherMessage('Có lỗi xảy ra khi kiểm tra mã giảm giá', 'danger');
+        } finally {
+            document.getElementById('applyVoucherBtn').disabled = false;
+            document.getElementById('applyVoucherBtn').innerHTML = '<i class="bi bi-check-lg"></i> Áp dụng';
+        }
+    }
+
+    function calculateDiscount() {
+        if (!appliedVoucher) return;
+
+        let discount = 0;
+
+        if (appliedVoucher.type === 'Percentage') {
+            discount = subtotal * appliedVoucher.value / 100;
+        } else if (appliedVoucher.type === 'FixedAmount') {
+            discount = appliedVoucher.value;
+        }
+
+        // Apply max discount if exists
+        if (appliedVoucher.maxDiscountAmount && discount > appliedVoucher.maxDiscountAmount) {
+            discount = appliedVoucher.maxDiscountAmount;
+        }
+
+        const finalTotal = subtotal - discount;
+
+        // Update UI
+        document.getElementById('discountRow').style.display = 'table-row';
+        document.getElementById('discountValue').textContent = '-' + discount.toLocaleString() + ' đ';
+        document.getElementById('finalTotal').textContent = finalTotal.toLocaleString() + ' đ';
+        document.getElementById('discountAmount').value = discount;
+    }
+
+    function displayVoucherInfo(voucher) {
+        document.getElementById('voucherName').textContent = voucher.code;
+        
+        let description = '';
+        if (voucher.type === 'Percentage') {
+            description = `Giảm ${voucher.value}%`;
+            if (voucher.maxDiscountAmount) {
+                description += ` (tối đa ${voucher.maxDiscountAmount.toLocaleString()}đ)`;
+            }
+        } else {
+            description = `Giảm ${voucher.value.toLocaleString()}đ`;
+        }
+        
+        if (voucher.description) {
+            description += ` - ${voucher.description}`;
+        }
+        
+        document.getElementById('voucherDescription').textContent = description;
+        document.getElementById('voucherInfo').style.display = 'block';
+        document.getElementById('voucherInput').value = '';
+        document.getElementById('voucherInput').disabled = true;
+        document.getElementById('applyVoucherBtn').disabled = true;
+    }
+
+    function removeVoucher() {
+        appliedVoucher = null;
+        
+        document.getElementById('voucherInfo').style.display = 'none';
+        document.getElementById('discountRow').style.display = 'none';
+        document.getElementById('finalTotal').textContent = subtotal.toLocaleString() + ' đ';
+        document.getElementById('voucherInput').disabled = false;
+        document.getElementById('applyVoucherBtn').disabled = false;
+        document.getElementById('appliedVoucherCode').value = '';
+        document.getElementById('discountAmount').value = '0';
+        
+        showVoucherMessage('Đã xóa mã giảm giá', 'info');
+    }
+
+    function showVoucherMessage(message, type) {
+        const messageDiv = document.getElementById('voucherMessage');
+        messageDiv.innerHTML = `<small class="text-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : type === 'info' ? 'info' : 'danger'}">${message}</small>`;
+        
+        setTimeout(() => {
+            messageDiv.innerHTML = '';
+        }, 3000);
+    }
+
+    // Allow Enter key to apply voucher
+    document.getElementById('voucherInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            applyVoucher();
+        }
+    });
+</script>
+}
+
+

@@ -1,0 +1,217 @@
+@{
+    ViewData["Title"] = "Danh sách yêu thích";
+}
+
+@{
+    var userJson = Context.Session.GetString("CurrentUser");
+    int? userId = null;
+    if (!string.IsNullOrEmpty(userJson))
+    {
+        var user = System.Text.Json.JsonSerializer.Deserialize<BeverageShop.MVC.Models.User>(userJson);
+        userId = user?.Id;
+    }
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-heart-fill text-danger"></i> Danh sách yêu thích</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại cửa hàng
+        </a>
+    </div>
+
+    @if (!userId.HasValue)
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle"></i> 
+            Bạn cần <a asp-controller="Account" asp-action="Login" class="alert-link">đăng nhập</a> để xem wishlist của mình.
+        </div>
+    }
+    else
+    {
+        <div id="wishlistContainer">
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Đang tải...</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="emptyWishlist" class="text-center py-5" style="display: none;">
+            <i class="bi bi-heart" style="font-size: 5rem; color: #ccc;"></i>
+            <h4 class="mt-3">Wishlist trống</h4>
+            <p class="text-muted">Bạn chưa thêm đồ uống nào vào danh sách yêu thích.</p>
+            <a asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-shop"></i> Khám phá cửa hàng
+            </a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    const API_URL = 'http://localhost:5000';
+    const userId = @(userId.HasValue ? userId.Value.ToString() : "null");
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (userId) {
+            await loadWishlist();
+        }
+    });
+
+    async function loadWishlist() {
+        try {
+            const response = await fetch(`${API_URL}/api/wishlist/user/${userId}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to load wishlist');
+            }
+            
+            const wishlist = await response.json();
+            
+            if (wishlist.length === 0) {
+                document.getElementById('wishlistContainer').style.display = 'none';
+                document.getElementById('emptyWishlist').style.display = 'block';
+                return;
+            }
+            
+            // Load beverage details for each wishlist item
+            const animalPromises = wishlist.map(item => 
+                fetch(`${API_URL}/api/beverages/${item.beverageId}`).then(r => r.json())
+            );
+            
+            const beverages = await Promise.all(animalPromises);
+            
+            renderWishlist(wishlist, beverages);
+        } catch (error) {
+            console.error('Error loading wishlist:', error);
+            document.getElementById('wishlistContainer').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    Có lỗi khi tải danh sách yêu thích. Vui lòng thử lại sau.
+                </div>
+            `;
+        }
+    }
+
+    function renderWishlist(wishlist, beverages) {
+        const container = document.getElementById('wishlistContainer');
+        
+        container.innerHTML = `
+            <div class="row">
+                ${beverages.map((beverage, index) => {
+                    const wishlistItem = wishlist[index];
+                    const addedDate = new Date(wishlistItem.addedDate).toLocaleDateString('vi-VN');
+                    
+                    return `
+                        <div class="col-md-6 col-lg-4 mb-4" id="wishlist-item-$${beverage.id}">
+                            <div class="card h-100 shadow-sm">
+                                <div class="position-relative">
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                                    </div>
+                                    <button class="btn btn-sm btn-wishlist active position-absolute top-0 end-0 m-2" 
+                                            onclick="removeFromWishlist($${beverage.id}, ${wishlistItem.id})" 
+                                            title="Xóa khỏi yêu thích">
+                                        <i class="bi bi-heart-fill"></i>
+                                    </button>
+                                    $${beverage.isAvailable && animal.stock > 0 
+                                        ? '' 
+                                        : '<div class="position-absolute bottom-0 start-0 w-100 bg-dark bg-opacity-75 text-white text-center py-2"><small>Hết hàng</small></div>'
+                                    }
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">$${beverage.name}</h5>
+                                    <p class="card-text small">
+                                        <span class="badge bg-secondary">$${beverage.species}</span>
+                                        <span class="badge bg-info">$${beverage.age} tuổi</span>
+                                    </p>
+                                    <p class="card-text text-truncate" style="max-height: 3em;">$${beverage.description}</p>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-danger fw-bold fs-5">$${beverage.price.toLocaleString()}đ</span>
+                                        $${beverage.isAvailable && animal.stock > 0 
+                                            ? `<span class="badge bg-success">Còn $${beverage.stock}</span>`
+                                            : `<span class="badge bg-danger">Hết hàng</span>`
+                                        }
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock"></i> Thêm vào: ${addedDate}
+                                    </small>
+                                </div>
+                                <div class="card-footer bg-white d-flex gap-2">
+                                    <a href="/Shop/Details/$${beverage.id}" class="btn btn-outline-info btn-sm flex-fill">
+                                        <i class="bi bi-info-circle"></i> Chi tiết
+                                    </a>
+                                    $${beverage.isAvailable && animal.stock > 0 ? `
+                                        <form action="/Shop/AddToCart" method="post" class="flex-fill">
+                                            <input type="hidden" name="beverageId" value="$${beverage.id}" />
+                                            <input type="hidden" name="quantity" value="1" />
+                                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                <i class="bi bi-cart-plus"></i> Thêm giỏ
+                                            </button>
+                                        </form>
+                                    ` : `
+                                        <button class="btn btn-secondary btn-sm flex-fill" disabled>
+                                            Hết hàng
+                                        </button>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
+
+    async function removeFromWishlist(beverageId, wishlistId) {
+        if (!confirm('Bạn có chắc muốn xóa khỏi wishlist?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${API_URL}/api/wishlist/${wishlistId}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                // Remove the card with animation
+                const card = document.getElementById(`wishlist-item-${beverageId}`);
+                card.style.transition = 'opacity 0.3s, transform 0.3s';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.9)';
+                
+                setTimeout(() => {
+                    card.remove();
+                    
+                    // Check if wishlist is now empty
+                    const container = document.getElementById('wishlistContainer');
+                    if (container.querySelectorAll('.col-md-6').length === 0) {
+                        container.style.display = 'none';
+                        document.getElementById('emptyWishlist').style.display = 'block';
+                    }
+                }, 300);
+                
+                showToast('Đã xóa khỏi wishlist!');
+            } else {
+                throw new Error('Failed to remove from wishlist');
+            }
+        } catch (error) {
+            console.error('Error removing from wishlist:', error);
+            showToast('Có lỗi xảy ra!', 'error');
+        }
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'error' ? 'danger' : 'success'} position-fixed top-0 end-0 m-3`;
+        toast.style.zIndex = '9999';
+        toast.innerHTML = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.remove(), 3000);
+    }
+</script>
+}
+
+

@@ -1,0 +1,160 @@
+@{
+    ViewData["Title"] = "Gi?i Thi?u - Animal Shop";
+}
+
+<!-- Hero Section -->
+<div class="hero-section text-center py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; margin-bottom: 30px;">
+    <div class="container">
+        <h1 class="display-3 fw-bold mb-4">?? Chào M?ng Ð?n Animal Shop ??</h1>
+        <p class="lead mb-4" style="font-size: 1.3rem;">C?a hàng thú cung uy tín hàng d?u Vi?t Nam</p>
+        <p class="mb-4" style="font-size: 1.1rem;">Chuyên cung c?p thú cung thu?n ch?ng, kh?e m?nh và dáng yêu</p>
+        <a href="/Shop/Index" class="btn btn-light btn-lg px-5 py-3" style="border-radius: 50px; font-weight: 600;">
+            <i class="bi bi-bag-heart"></i> Mua S?m Ngay
+        </a>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mb-5">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center border-0 shadow-sm hover-card">
+            <div class="card-body p-4">
+                <div class="mb-3" style="font-size: 3rem;">??</div>
+                <h4 class="card-title fw-bold">Thú Cung Ch?t Lu?ng</h4>
+                <p class="card-text text-muted">Cam k?t 100% thú cung thu?n ch?ng, có gi?y t? ngu?n g?c rõ ràng</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center border-0 shadow-sm hover-card">
+            <div class="card-body p-4">
+                <div class="mb-3" style="font-size: 3rem;">??</div>
+                <h4 class="card-title fw-bold">Cham Sóc S?c Kh?e</h4>
+                <p class="card-text text-muted">Ð?y d? vaccine, t?y giun, ki?m tra s?c kh?e d?nh k? b?i bác si thú y</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center border-0 shadow-sm hover-card">
+            <div class="card-body p-4">
+                <div class="mb-3" style="font-size: 3rem;">??</div>
+                <h4 class="card-title fw-bold">B?o Hành Uy Tín</h4>
+                <p class="card-text text-muted">B?o hành s?c kh?e 30 ngày, h? tr? tu v?n mi?n phí tr?n d?i</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Popular Pets Section -->
+<div class="mb-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">?? Thú Cung Ph? Bi?n</h2>
+        <p class="text-muted">Nh?ng bé cung du?c yêu thích nh?t</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card border-0 shadow-sm hover-card">
+                <div class="card-body text-center p-4">
+                    <div style="font-size: 4rem;">??</div>
+                    <h5 class="mt-3 fw-bold">Chó C?nh</h5>
+                    <p class="text-muted small">Golden, Husky, Corgi...</p>
+                    <a href="/Shop/Index?category=Chó" class="btn btn-outline-primary btn-sm">Xem Thêm</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card border-0 shadow-sm hover-card">
+                <div class="card-body text-center p-4">
+                    <div style="font-size: 4rem;">??</div>
+                    <h5 class="mt-3 fw-bold">Mèo C?nh</h5>
+                    <p class="text-muted small">Ba Tu, Anh Lông Ng?n...</p>
+                    <a href="/Shop/Index?category=Mèo" class="btn btn-outline-primary btn-sm">Xem Thêm</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card border-0 shadow-sm hover-card">
+                <div class="card-body text-center p-4">
+                    <div style="font-size: 4rem;">??</div>
+                    <h5 class="mt-3 fw-bold">Th? C?nh</h5>
+                    <p class="text-muted small">Th? Hà Lan, Mini Lop...</p>
+                    <a href="/Shop/Index?category=Th?" class="btn btn-outline-primary btn-sm">Xem Thêm</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card border-0 shadow-sm hover-card">
+                <div class="card-body text-center p-4">
+                    <div style="font-size: 4rem;">??</div>
+                    <h5 class="mt-3 fw-bold">Hamster</h5>
+                    <p class="text-muted small">Syrian, Roborovski...</p>
+                    <a href="/Shop/Index?category=Chu?t Hamster" class="btn btn-outline-primary btn-sm">Xem Thêm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Why Choose Us Section -->
+<div class="bg-light p-5 rounded-3 mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h2 class="fw-bold mb-4">?? T?i Sao Ch?n Animal Shop?</h2>
+            <ul class="list-unstyled">
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>Kinh nghi?m 10+ nam</strong> trong ngành thú cung
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>Ð?i ngu chuyên nghi?p</strong> tu v?n t?n tình
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>Giá c? h?p lý</strong>, nhi?u uu dãi h?p d?n
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>Giao hàng toàn qu?c</strong>, dóng gói c?n th?n
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>H? tr? 24/7</strong> qua hotline và Zalo
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-6 text-center">
+            <div style="font-size: 10rem;">??</div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact CTA -->
+<div class="text-center p-5" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 15px;">
+    <h2 class="fw-bold mb-3">?? Liên H? Ngay Hôm Nay!</h2>
+    <p class="lead mb-4">Ð?i ngu chuyên viên luôn s?n sàng tu v?n</p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="/Shop/Index" class="btn btn-light btn-lg">
+            <i class="bi bi-shop"></i> Xem S?n Ph?m
+        </a>
+        <a href="/Account/Register" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-person-plus"></i> Ðang Ký Ngay
+        </a>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    }
+</style>

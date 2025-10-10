@@ -1,0 +1,152 @@
+@model BeverageShop.MVC.Models.Beverage
+@{
+    ViewData["Title"] = "Thêm Đồ Uống Mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="bi bi-plus-circle"></i> Thêm Đồ Uống Mới</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateBeverage" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Tên đồ uống <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control" placeholder="VD: Trà Đào Cam Sả" required />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Category" class="form-label">Danh mục <span class="text-danger">*</span></label>
+                            <input asp-for="Category" class="form-control" list="categoryList" placeholder="VD: Cà phê, Trà, Nước ép" required />
+                            <datalist id="categoryList">
+                                <option value="Cà phê"></option>
+                                <option value="Trà"></option>
+                                <option value="Nước ép"></option>
+                                <option value="Sinh tố"></option>
+                                <option value="Sữa"></option>
+                            </datalist>
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Type" class="form-label">Loại <span class="text-danger">*</span></label>
+                                <input asp-for="Type" class="form-control" placeholder="VD: Trà trái cây" required />
+                                <span asp-validation-for="Type" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Size" class="form-label">Size <span class="text-danger">*</span></label>
+                                <select asp-for="Size" class="form-select" required>
+                                    <option value="">-- Chọn size --</option>
+                                    <option value="S">Size S</option>
+                                    <option value="M">Size M</option>
+                                    <option value="L">Size L</option>
+                                    <option value="XL">Size XL</option>
+                                </select>
+                                <span asp-validation-for="Size" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Price" class="form-label">Giá (VNĐ) <span class="text-danger">*</span></label>
+                                <input asp-for="Price" type="number" step="1000" class="form-control" placeholder="VD: 45000" required />
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Stock" class="form-label">Số lượng <span class="text-danger">*</span></label>
+                                <input asp-for="Stock" type="number" class="form-control" placeholder="VD: 100" required />
+                                <span asp-validation-for="Stock" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Mô tả</label>
+                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Mô tả chi tiết về đồ uống..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Hình ảnh <span class="text-danger">*</span></label>
+                            
+                            <!-- Option 1: URL -->
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="imageOption" id="urlOption" value="url" checked>
+                                    <label class="form-check-label" for="urlOption">
+                                        <strong>Nhập URL ảnh</strong>
+                                    </label>
+                                </div>
+                                <input asp-for="ImageUrl" type="text" class="form-control mt-2" id="imageUrlInput" 
+                                       placeholder="https://example.com/image.jpg hoặc /images/product.jpg" />
+                                <small class="form-text text-muted">
+                                    <i class="bi bi-info-circle"></i> URL từ internet hoặc đường dẫn local (VD: /images/ca-phe.jpg)
+                                </small>
+                            </div>
+
+                            <!-- Option 2: Upload File -->
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="imageOption" id="uploadOption" value="upload">
+                                    <label class="form-check-label" for="uploadOption">
+                                        <strong>Hoặc upload ảnh từ máy tính</strong>
+                                    </label>
+                                </div>
+                                <input type="file" class="form-control mt-2" id="imageFileInput" accept="image/*" disabled />
+                                <small class="form-text text-muted">
+                                    <i class="bi bi-info-circle"></i> Chức năng upload đang phát triển
+                                </small>
+                            </div>
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Beverages" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Quay lại danh sách
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Thêm đồ uống
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Toggle between URL input and file upload
+            $('input[name="imageOption"]').change(function() {
+                if ($(this).val() === 'url') {
+                    $('#imageUrlInput').prop('disabled', false).focus();
+                    $('#imageFileInput').prop('disabled', true).val('');
+                } else {
+                    $('#imageUrlInput').prop('disabled', true).val('');
+                    $('#imageFileInput').prop('disabled', false);
+                }
+            });
+
+            // Validate at least one option is filled
+            $('form').submit(function(e) {
+                const urlValue = $('#imageUrlInput').val().trim();
+                const fileValue = $('#imageFileInput').val();
+                
+                if (!urlValue && !fileValue) {
+                    e.preventDefault();
+                    alert('Vui lòng nhập URL ảnh hoặc chọn file ảnh!');
+                    return false;
+                }
+            });
+        });
+    </script>
+}
