@@ -29,3 +29,4 @@ D:\code\BeverageShop\BeverageShop.MVC\obj\Debug\net8.0\refint\BeverageShop.MVC.d
 D:\code\BeverageShop\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.pdb
 D:\code\BeverageShop\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.genruntimeconfig.cache
 D:\code\BeverageShop\BeverageShop.MVC\obj\Debug\net8.0\ref\BeverageShop.MVC.dll
+D:\code\BeverageShop\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.sourcelink.json

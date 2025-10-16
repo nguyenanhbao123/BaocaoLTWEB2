@@ -298,3 +298,4 @@ D:\code\BeverageShop\BeverageShop.API\obj\Debug\net8.0\refint\BeverageShop.API.d
 D:\code\BeverageShop\BeverageShop.API\obj\Debug\net8.0\BeverageShop.API.pdb
 D:\code\BeverageShop\BeverageShop.API\obj\Debug\net8.0\BeverageShop.API.genruntimeconfig.cache
 D:\code\BeverageShop\BeverageShop.API\obj\Debug\net8.0\ref\BeverageShop.API.dll
+D:\code\BeverageShop\BeverageShop.API\obj\Debug\net8.0\BeverageShop.API.sourcelink.json
