@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using BeverageShop.API.Models;
 using BeverageShop.API.Data;
 
@@ -8,46 +9,65 @@ namespace BeverageShop.API.Controllers
     [Route("api/[controller]")]
     public class ReviewsController : ControllerBase
     {
-        [HttpGet("beverage/{beverageId}")]
-        public ActionResult<IEnumerable<Review>> GetReviewsByBeverage(int beverageId)
+        private readonly BeverageShopDbContext _context;
+
+        public ReviewsController(BeverageShopDbContext context)
         {
-            var reviews = BeverageShopData.GetReviewsByBeverageId(beverageId);
+            _context = context;
+        }
+
+        [HttpGet("beverage/{beverageId}")]
+        public async Task<ActionResult<IEnumerable<Review>>> GetReviewsByBeverage(int beverageId)
+        {
+            var reviews = await _context.Reviews
+                .Where(r => r.BeverageId == beverageId)
+                .OrderByDescending(r => r.CreatedDate)
+                .ToListAsync();
             return Ok(reviews);
         }
 
         [HttpPost]
-        public ActionResult<Review> CreateReview(Review review)
+        public async Task<ActionResult<Review>> CreateReview(Review review)
         {
             if (review.Rating < 1 || review.Rating > 5)
             {
                 return BadRequest(new { message = "Đánh giá phải từ 1 đến 5 sao" });
             }
 
-            var beverage = BeverageShopData.GetBeverageById(review.BeverageId);
+            var beverage = await _context.Beverages.FindAsync(review.BeverageId);
             if (beverage == null)
             {
                 return NotFound(new { message = "Không tìm thấy đồ uống" });
             }
 
-            var newReview = BeverageShopData.AddReview(review);
-            return CreatedAtAction(nameof(GetReviewsByBeverage), new { beverageId = review.BeverageId }, newReview);
+            review.CreatedDate = DateTime.Now;
+            _context.Reviews.Add(review);
+            await _context.SaveChangesAsync();
+            
+            return CreatedAtAction(nameof(GetReviewsByBeverage), new { beverageId = review.BeverageId }, review);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteReview(int id)
+        public async Task<IActionResult> DeleteReview(int id)
         {
-            var result = BeverageShopData.DeleteReview(id);
-            if (!result)
+            var review = await _context.Reviews.FindAsync(id);
+            if (review == null)
             {
                 return NotFound(new { message = "Không tìm thấy đánh giá" });
             }
+            
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
         [HttpGet("stats/{beverageId}")]
-        public ActionResult<object> GetReviewStats(int beverageId)
+        public async Task<ActionResult<object>> GetReviewStats(int beverageId)
         {
-            var reviews = BeverageShopData.GetReviewsByBeverageId(beverageId);
+            var reviews = await _context.Reviews
+                .Where(r => r.BeverageId == beverageId)
+                .ToListAsync();
+                
             if (!reviews.Any())
             {
                 return Ok(new 

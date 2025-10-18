@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using BeverageShop.API.Models;
 using BeverageShop.API.Data;
 
@@ -8,20 +9,40 @@ namespace BeverageShop.API.Controllers
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase
     {
+        private readonly BeverageShopDbContext _context;
+
+        public OrdersController(BeverageShopDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
-        public ActionResult<IEnumerable<Order>> GetOrders([FromQuery] int? userId = null)
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrders([FromQuery] int? userId = null)
         {
             if (userId.HasValue)
             {
-                return Ok(BeverageShopData.GetOrdersByUserId(userId.Value));
+                var userOrders = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .Where(o => o.UserId == userId.Value)
+                    .OrderByDescending(o => o.OrderDate)
+                    .ToListAsync();
+                return Ok(userOrders);
             }
-            return Ok(BeverageShopData.GetOrders());
+            
+            var orders = await _context.Orders
+                .Include(o => o.OrderItems)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+            return Ok(orders);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Order> GetOrder(int id)
+        public async Task<ActionResult<Order>> GetOrder(int id)
         {
-            var order = BeverageShopData.GetOrderById(id);
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.Id == id);
+                
             if (order == null)
             {
                 return NotFound(new { message = "Không tìm thấy đơn hàng" });
@@ -30,19 +51,23 @@ namespace BeverageShop.API.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        public ActionResult<IEnumerable<Order>> GetOrdersByUser(int userId)
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByUser(int userId)
         {
-            var orders = BeverageShopData.GetOrdersByUserId(userId);
+            var orders = await _context.Orders
+                .Include(o => o.OrderItems)
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
             return Ok(orders);
         }
 
         [HttpPost]
-        public ActionResult<Order> CreateOrder(Order order)
+        public async Task<ActionResult<Order>> CreateOrder(Order order)
         {
             // Validate stock
             foreach (var item in order.OrderItems)
             {
-                var beverage = BeverageShopData.GetBeverageById(item.BeverageId);
+                var beverage = await _context.Beverages.FindAsync(item.BeverageId);
                 if (beverage == null)
                 {
                     return BadRequest(new { message = $"Không tìm thấy đồ uống ID {item.BeverageId}" });
@@ -56,7 +81,7 @@ namespace BeverageShop.API.Controllers
             // Update stock
             foreach (var item in order.OrderItems)
             {
-                var beverage = BeverageShopData.GetBeverageById(item.BeverageId);
+                var beverage = await _context.Beverages.FindAsync(item.BeverageId);
                 if (beverage != null)
                 {
                     beverage.Stock -= item.Quantity;
@@ -67,8 +92,11 @@ namespace BeverageShop.API.Controllers
                 }
             }
 
-            var newOrder = BeverageShopData.AddOrder(order);
-            return CreatedAtAction(nameof(GetOrder), new { id = newOrder.Id }, newOrder);
+            order.OrderDate = DateTime.Now;
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+            
+            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
         }
     }
 }

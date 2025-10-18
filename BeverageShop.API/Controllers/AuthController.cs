@@ -3,6 +3,7 @@ using BeverageShop.API.Models;
 using BeverageShop.API.Data;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace BeverageShop.API.Controllers
 {
@@ -10,8 +11,15 @@ namespace BeverageShop.API.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
+        private readonly BeverageShopDbContext _context;
+
+        public AuthController(BeverageShopDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpPost("register")]
-        public ActionResult<LoginResponse> Register(RegisterRequest request)
+        public async Task<ActionResult<LoginResponse>> Register(RegisterRequest request)
         {
             if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
             {
@@ -22,7 +30,8 @@ namespace BeverageShop.API.Controllers
                 });
             }
 
-            if (BeverageShopData.GetUserByUsername(request.Username) != null)
+            // Kiểm tra username đã tồn tại trong database
+            if (await _context.Users.AnyAsync(u => u.Username == request.Username))
             {
                 return BadRequest(new LoginResponse 
                 { 
@@ -39,10 +48,14 @@ namespace BeverageShop.API.Controllers
                 FullName = request.FullName,
                 Phone = request.Phone,
                 Address = request.Address,
-                Role = UserRole.Customer
+                Role = UserRole.Customer,
+                IsActive = true,
+                CreatedDate = DateTime.Now
             };
 
-            var newUser = BeverageShopData.AddUser(user);
+            // Lưu vào database
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
             return Ok(new LoginResponse
             {
@@ -50,22 +63,23 @@ namespace BeverageShop.API.Controllers
                 Message = "Đăng ký thành công",
                 User = new User 
                 { 
-                    Id = newUser.Id,
-                    Username = newUser.Username,
-                    Email = newUser.Email,
-                    FullName = newUser.FullName,
-                    Phone = newUser.Phone,
-                    Address = newUser.Address,
-                    Role = newUser.Role
+                    Id = user.Id,
+                    Username = user.Username,
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    Phone = user.Phone,
+                    Address = user.Address,
+                    Role = user.Role
                 },
-                Token = GenerateToken(newUser)
+                Token = GenerateToken(user)
             });
         }
 
         [HttpPost("login")]
-        public ActionResult<LoginResponse> Login(LoginRequest request)
+        public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
         {
-            var user = BeverageShopData.GetUserByUsername(request.Username);
+            // Tìm user trong database
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
             
             if (user == null || !VerifyPassword(request.Password, user.PasswordHash))
             {
