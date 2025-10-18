@@ -1,0 +1,162 @@
+@inject IConfiguration Configuration
+@model string
+@{
+    ViewData["Title"] = $"Sửa Thương hiệu: {Model}";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-pencil"></i> Sửa Thương hiệu</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Dashboard" asp-controller="Admin">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Brands">Thương hiệu</a></li>
+                    <li class="breadcrumb-item active">Sửa</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0"><i class="bi bi-tag-fill"></i> Đổi tên Thương hiệu</h5>
+                </div>
+                <div class="card-body">
+                    <form id="editBrandForm">
+                        <div class="mb-3">
+                            <label for="oldBrandName" class="form-label fw-bold">Tên hiện tại</label>
+                            <input type="text" class="form-control" id="oldBrandName" value="@Model" readonly>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="newBrandName" class="form-label fw-bold">
+                                Tên mới <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="newBrandName" 
+                                   value="@Model" placeholder="Nhập tên mới..." required>
+                            <div class="form-text">Tất cả sản phẩm của thương hiệu này sẽ được cập nhật</div>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a asp-action="Brands" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Hủy
+                            </a>
+                            <button type="submit" class="btn btn-warning" id="submitBtn">
+                                <i class="bi bi-check-circle"></i> Cập nhật
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Products Preview -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="bi bi-box-seam"></i> Sản phẩm của thương hiệu này</h6>
+                </div>
+                <div class="card-body" id="productsList">
+                    <div class="text-center py-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Đang tải...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const API_URL = '@Configuration["ApiSettings:BaseUrl"]';
+    const brandName = '@Model';
+
+    // Load products of this brand
+    document.addEventListener('DOMContentLoaded', async function() {
+        await loadProducts();
+    });
+
+    async function loadProducts() {
+        try {
+            const response = await fetch(`${API_URL}/api/beverages/filter?brand=${encodeURIComponent(brandName)}`);
+            if (!response.ok) throw new Error('Failed to load products');
+            
+            const products = await response.json();
+            
+            if (products.length === 0) {
+                document.getElementById('productsList').innerHTML = '<p class="text-center text-muted py-3">Không có sản phẩm nào</p>';
+                return;
+            }
+
+            const html = `
+                <div class="list-group list-group-flush">
+                    ${products.map(p => `
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>${p.name}</span>
+                            <span class="badge bg-primary">${p.category}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="mt-2 text-muted small">
+                    <i class="bi bi-info-circle"></i> Tổng: <strong>${products.length}</strong> sản phẩm
+                </div>
+            `;
+            
+            document.getElementById('productsList').innerHTML = html;
+        } catch (error) {
+            console.error('Error loading products:', error);
+            document.getElementById('productsList').innerHTML = `
+                <div class="alert alert-danger mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Lỗi khi tải danh sách
+                </div>
+            `;
+        }
+    }
+
+    // Handle form submit
+    document.getElementById('editBrandForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const oldName = document.getElementById('oldBrandName').value;
+        const newName = document.getElementById('newBrandName').value.trim();
+
+        if (!newName || oldName === newName) {
+            alert('Vui lòng nhập tên mới khác với tên cũ!');
+            return;
+        }
+
+        if (!confirm(`Bạn có chắc muốn đổi tên thương hiệu từ "${oldName}" sang "${newName}"?`)) {
+            return;
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang cập nhật...';
+
+        try {
+            const response = await fetch(`${API_URL}/api/brands/rename`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ oldName, newName })
+            });
+
+            if (response.ok) {
+                window.location.href = '@Url.Action("Brands", "Admin")';
+            } else {
+                const error = await response.json();
+                alert('Lỗi: ' + (error.message || 'Không thể đổi tên thương hiệu'));
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Cập nhật';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra!');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Cập nhật';
+        }
+    });
+</script>
+}

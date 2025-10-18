@@ -1,0 +1,155 @@
+@inject IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Thêm Thương hiệu mới";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-plus-circle"></i> Thêm Thương hiệu mới</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Dashboard" asp-controller="Admin">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Brands">Thương hiệu</a></li>
+                    <li class="breadcrumb-item active">Thêm mới</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-tag-fill"></i> Thông tin Thương hiệu</h5>
+                </div>
+                <div class="card-body">
+                    <form id="createBrandForm">
+                        <div class="mb-4">
+                            <label for="brandName" class="form-label fw-bold">
+                                Tên Thương hiệu <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="brandName" 
+                                   placeholder="VD: Starbucks, Nescafe..." required>
+                            <div class="form-text">Nhập tên thương hiệu duy nhất</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                Chọn sản phẩm để gán thương hiệu <span class="text-danger">*</span>
+                            </label>
+                            <div class="border rounded p-3" style="max-height: 400px; overflow-y: auto;" id="beveragesList">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Đang tải...</span>
+                                    </div>
+                                    <p class="mt-2 text-muted">Đang tải danh sách sản phẩm...</p>
+                                </div>
+                            </div>
+                            <div class="form-text">
+                                Chọn ít nhất 1 sản phẩm. Có thể chọn nhiều sản phẩm cùng lúc.
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a asp-action="Brands" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Hủy
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="bi bi-check-circle"></i> Tạo Thương hiệu
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const API_URL = '@Configuration["ApiSettings:BaseUrl"]';
+
+    // Load beverages on page load
+    document.addEventListener('DOMContentLoaded', async function() {
+        await loadBeverages();
+    });
+
+    async function loadBeverages() {
+        try {
+            const response = await fetch(`${API_URL}/api/beverages`);
+            if (!response.ok) throw new Error('Failed to load beverages');
+            
+            const beverages = await response.json();
+            
+            const html = beverages.map(b => `
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" value="${b.id}" id="bev${b.id}">
+                    <label class="form-check-label d-flex justify-content-between align-items-center" for="bev${b.id}">
+                        <span>
+                            ${b.name}
+                            ${b.brand ? `<span class="badge bg-secondary ms-2">${b.brand}</span>` : ''}
+                        </span>
+                        <span class="text-muted small">${b.category}</span>
+                    </label>
+                </div>
+            `).join('');
+            
+            document.getElementById('beveragesList').innerHTML = html || '<p class="text-center text-muted py-3">Không có sản phẩm nào</p>';
+        } catch (error) {
+            console.error('Error loading beverages:', error);
+            document.getElementById('beveragesList').innerHTML = `
+                <div class="alert alert-danger mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Lỗi khi tải danh sách sản phẩm
+                </div>
+            `;
+        }
+    }
+
+    // Handle form submit
+    document.getElementById('createBrandForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const brandName = document.getElementById('brandName').value.trim();
+        if (!brandName) {
+            alert('Vui lòng nhập tên thương hiệu!');
+            return;
+        }
+
+        const checkboxes = document.querySelectorAll('#beveragesList input[type="checkbox"]:checked');
+        const beverageIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
+        if (beverageIds.length === 0) {
+            alert('Vui lòng chọn ít nhất 1 sản phẩm!');
+            return;
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang tạo...';
+
+        try {
+            const response = await fetch(`${API_URL}/api/brands/assign`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ brandName, beverageIds })
+            });
+
+            if (response.ok) {
+                window.location.href = '@Url.Action("Brands", "Admin")';
+            } else {
+                const error = await response.json();
+                alert('Lỗi: ' + (error.message || 'Không thể tạo thương hiệu'));
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Tạo Thương hiệu';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi tạo thương hiệu!');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Tạo Thương hiệu';
+        }
+    });
+</script>
+}

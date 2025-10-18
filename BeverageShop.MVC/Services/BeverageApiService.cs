@@ -92,17 +92,31 @@ namespace BeverageShop.MVC.Services
         {
             try
             {
-                var json = JsonSerializer.Serialize(order);
+                var json = JsonSerializer.Serialize(order, new JsonSerializerOptions 
+                { 
+                    WriteIndented = true 
+                });
+                Console.WriteLine($"Creating order with JSON: {json}");
+                
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 
                 var response = await _httpClient.PostAsync("api/orders", content);
-                response.EnsureSuccessStatusCode();
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"API Error: {response.StatusCode} - {errorContent}");
+                    return null;
+                }
                 
                 var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Order created successfully: {responseContent}");
                 return JsonSerializer.Deserialize<Order>(responseContent, _jsonOptions);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"Exception in CreateOrderAsync: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 return null;
             }
         }

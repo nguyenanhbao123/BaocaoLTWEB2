@@ -140,28 +140,40 @@
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-sm-6">
                             <a asp-action="CreateBeverage" class="btn btn-outline-primary w-100 py-3">
                                 <i class="bi bi-plus-circle"></i><br />
                                 Thêm sản phẩm mới
                             </a>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-sm-6">
+                            <a asp-action="Brands" class="btn btn-outline-secondary w-100 py-3">
+                                <i class="bi bi-tag-fill"></i><br />
+                                Quản lý Brands
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
                             <a asp-action="CreateVoucher" class="btn btn-outline-success w-100 py-3">
                                 <i class="bi bi-ticket-perforated"></i><br />
                                 Tạo mã giảm giá
                             </a>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-sm-6">
                             <a asp-action="Orders" class="btn btn-outline-warning w-100 py-3">
                                 <i class="bi bi-box-seam"></i><br />
                                 Quản lý đơn hàng
                             </a>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-sm-6">
                             <a asp-action="Users" class="btn btn-outline-info w-100 py-3">
                                 <i class="bi bi-people"></i><br />
                                 Quản lý người dùng
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <a asp-action="Beverages" class="btn btn-outline-dark w-100 py-3">
+                                <i class="bi bi-cup-straw"></i><br />
+                                Quản lý sản phẩm
                             </a>
                         </div>
                     </div>
@@ -185,32 +197,35 @@
                             {
                                 <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                                     <span>
-                                        @switch (status.Key)
+                                        @if (status.Key == "Pending")
                                         {
-                                            case "Pending":
-                                                <i class="bi bi-clock text-warning"></i>
-                                                <span>Chờ xử lý</span>
-                                                break;
-                                            case "Confirmed":
-                                                <i class="bi bi-check-circle text-info"></i>
-                                                <span>Đã xác nhận</span>
-                                                break;
-                                            case "Processing":
-                                                <i class="bi bi-gear text-primary"></i>
-                                                <span>Đang xử lý</span>
-                                                break;
-                                            case "Shipping":
-                                                <i class="bi bi-truck text-info"></i>
-                                                <span>Đang giao</span>
-                                                break;
-                                            case "Delivered":
-                                                <i class="bi bi-check2-circle text-success"></i>
-                                                <span>Đã giao</span>
-                                                break;
-                                            case "Cancelled":
-                                                <i class="bi bi-x-circle text-danger"></i>
-                                                <span>Đã hủy</span>
-                                                break;
+                                            <i class="bi bi-clock text-warning"></i>
+                                            <span>Chờ xử lý</span>
+                                        }
+                                        else if (status.Key == "Confirmed")
+                                        {
+                                            <i class="bi bi-check-circle text-info"></i>
+                                            <span>Đã xác nhận</span>
+                                        }
+                                        else if (status.Key == "Processing")
+                                        {
+                                            <i class="bi bi-gear text-primary"></i>
+                                            <span>Đang xử lý</span>
+                                        }
+                                        else if (status.Key == "Shipping")
+                                        {
+                                            <i class="bi bi-truck text-info"></i>
+                                            <span>Đang giao</span>
+                                        }
+                                        else if (status.Key == "Delivered")
+                                        {
+                                            <i class="bi bi-check2-circle text-success"></i>
+                                            <span>Đã giao</span>
+                                        }
+                                        else if (status.Key == "Cancelled")
+                                        {
+                                            <i class="bi bi-x-circle text-danger"></i>
+                                            <span>Đã hủy</span>
                                         }
                                     </span>
                                     <span class="badge bg-primary rounded-pill">@status.Value</span>
@@ -259,22 +274,22 @@
                                             <td>
                                                 @switch (order.Status)
                                                 {
-                                                    case "Pending":
+                                                    case BeverageShop.MVC.Models.OrderStatus.Pending:
                                                         <span class="badge bg-warning">Chờ xử lý</span>
                                                         break;
-                                                    case "Confirmed":
+                                                    case BeverageShop.MVC.Models.OrderStatus.Confirmed:
                                                         <span class="badge bg-info">Đã xác nhận</span>
                                                         break;
-                                                    case "Processing":
+                                                    case BeverageShop.MVC.Models.OrderStatus.Processing:
                                                         <span class="badge bg-primary">Đang xử lý</span>
                                                         break;
-                                                    case "Shipping":
+                                                    case BeverageShop.MVC.Models.OrderStatus.Shipping:
                                                         <span class="badge bg-info">Đang giao</span>
                                                         break;
-                                                    case "Delivered":
+                                                    case BeverageShop.MVC.Models.OrderStatus.Delivered:
                                                         <span class="badge bg-success">Đã giao</span>
                                                         break;
-                                                    case "Cancelled":
+                                                    case BeverageShop.MVC.Models.OrderStatus.Cancelled:
                                                         <span class="badge bg-danger">Đã hủy</span>
                                                         break;
                                                 }

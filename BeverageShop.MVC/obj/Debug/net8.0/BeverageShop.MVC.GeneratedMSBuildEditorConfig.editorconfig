@@ -30,14 +30,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Account/OrderDetails.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxPcmRlckRldGFpbHMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Account/Orders.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxPcmRlcnMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
 [D:/code/BeverageShop/BeverageShop.MVC/Views/Account/Profile.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxQcm9maWxlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -46,56 +38,72 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Beverages.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQmV2ZXJhZ2VzLmNzaHRtbA==
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Brand/BeveragesByBrand.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQnJhbmRcQmV2ZXJhZ2VzQnlCcmFuZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/CreateBeverage.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ3JlYXRlQmV2ZXJhZ2UuY3NodG1s
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Brand/Brands.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQnJhbmRcQnJhbmRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/CreateUser.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ3JlYXRlVXNlci5jc2h0bWw=
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Brand/CreateBrand.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQnJhbmRcQ3JlYXRlQnJhbmQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/CreateVoucher.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ3JlYXRlVm91Y2hlci5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/EditBeverage.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRWRpdEJldmVyYWdlLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/EditUser.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRWRpdFVzZXIuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/EditVoucher.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRWRpdFZvdWNoZXIuY3NodG1s
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Brand/EditBrand.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQnJhbmRcRWRpdEJyYW5kLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/OrderDetails.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXJEZXRhaWxzLmNzaHRtbA==
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Order/OrderDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXJcT3JkZXJEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Orders.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXJzLmNzaHRtbA==
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Order/Orders.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXJcT3JkZXJzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Products/Beverages.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUHJvZHVjdHNcQmV2ZXJhZ2VzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Products/CreateBeverage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUHJvZHVjdHNcQ3JlYXRlQmV2ZXJhZ2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Products/EditBeverage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUHJvZHVjdHNcRWRpdEJldmVyYWdlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Revenue.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUmV2ZW51ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Users.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXNlcnMuY3NodG1s
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Users/CreateUser.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXNlcnNcQ3JlYXRlVXNlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Vouchers.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVm91Y2hlcnMuY3NodG1s
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Users/EditUser.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXNlcnNcRWRpdFVzZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Users/Users.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXNlcnNcVXNlcnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Vouchers/CreateVoucher.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVm91Y2hlcnNcQ3JlYXRlVm91Y2hlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Vouchers/EditVoucher.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVm91Y2hlcnNcRWRpdFZvdWNoZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/code/BeverageShop/BeverageShop.MVC/Views/Admin/Vouchers/Vouchers.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVm91Y2hlcnNcVm91Y2hlcnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/code/BeverageShop/BeverageShop.MVC/Views/Home/Index.cshtml]

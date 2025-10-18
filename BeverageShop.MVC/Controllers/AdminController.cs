@@ -9,11 +9,13 @@ namespace BeverageShop.MVC.Controllers
     {
         private readonly BeverageApiService _apiService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public AdminController(BeverageApiService apiService, IHttpClientFactory httpClientFactory)
+        public AdminController(BeverageApiService apiService, IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _apiService = apiService;
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         // Middleware to check admin access
@@ -336,6 +338,46 @@ namespace BeverageShop.MVC.Controllers
             }
 
             return RedirectToAction(nameof(OrderDetails), new { id });
+        }
+
+        // === QUẢN LÝ THƯƠNG HIỆU (BRANDS) ===
+        public async Task<IActionResult> Brands()
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync($"{_configuration["ApiSettings:BaseUrl"]}/api/brands/with-count");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var brands = await response.Content.ReadFromJsonAsync<List<dynamic>>();
+                return View(brands);
+            }
+
+            return View(new List<dynamic>());
+        }
+
+        public async Task<IActionResult> BeveragesByBrand(string brand)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var beverages = await _apiService.GetBeveragesAsync();
+            var filtered = beverages.Where(b => b.Brand == brand).ToList();
+            
+            ViewBag.BrandName = brand;
+            return View("Brand/BeveragesByBrand", filtered);
+        }
+
+        public IActionResult CreateBrand()
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+            return View("Brand/CreateBrand");
+        }
+
+        public IActionResult EditBrand(string brand)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+            return View("Brand/EditBrand", brand);
         }
 
         // === QUẢN LÝ DANH MỤC ===

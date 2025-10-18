@@ -64,39 +64,62 @@ namespace BeverageShop.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder(Order order)
         {
-            // Validate stock
-            foreach (var item in order.OrderItems)
+            try
             {
-                var beverage = await _context.Beverages.FindAsync(item.BeverageId);
-                if (beverage == null)
+                Console.WriteLine($"📦 Received order from: {order.CustomerName}");
+                Console.WriteLine($"📦 Total items: {order.OrderItems?.Count ?? 0}");
+                
+                if (order.OrderItems == null || !order.OrderItems.Any())
                 {
-                    return BadRequest(new { message = $"Không tìm thấy đồ uống ID {item.BeverageId}" });
+                    Console.WriteLine("❌ No order items!");
+                    return BadRequest(new { message = "Đơn hàng không có sản phẩm" });
                 }
-                if (beverage.Stock < item.Quantity)
-                {
-                    return BadRequest(new { message = $"Không đủ hàng cho {beverage.Name}" });
-                }
-            }
 
-            // Update stock
-            foreach (var item in order.OrderItems)
-            {
-                var beverage = await _context.Beverages.FindAsync(item.BeverageId);
-                if (beverage != null)
+                // Validate stock
+                foreach (var item in order.OrderItems)
                 {
-                    beverage.Stock -= item.Quantity;
-                    if (beverage.Stock == 0)
+                    Console.WriteLine($"   - Checking beverage ID: {item.BeverageId}, Qty: {item.Quantity}");
+                    var beverage = await _context.Beverages.FindAsync(item.BeverageId);
+                    if (beverage == null)
                     {
-                        beverage.IsAvailable = false;
+                        Console.WriteLine($"❌ Beverage not found: {item.BeverageId}");
+                        return BadRequest(new { message = $"Không tìm thấy đồ uống ID {item.BeverageId}" });
+                    }
+                    if (beverage.Stock < item.Quantity)
+                    {
+                        Console.WriteLine($"❌ Not enough stock for {beverage.Name}: {beverage.Stock} < {item.Quantity}");
+                        return BadRequest(new { message = $"Không đủ hàng cho {beverage.Name}" });
                     }
                 }
-            }
 
-            order.OrderDate = DateTime.Now;
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-            
-            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+                // Update stock
+                foreach (var item in order.OrderItems)
+                {
+                    var beverage = await _context.Beverages.FindAsync(item.BeverageId);
+                    if (beverage != null)
+                    {
+                        beverage.Stock -= item.Quantity;
+                        if (beverage.Stock == 0)
+                        {
+                            beverage.IsAvailable = false;
+                        }
+                        Console.WriteLine($"✅ Updated stock for {beverage.Name}: {beverage.Stock + item.Quantity} -> {beverage.Stock}");
+                    }
+                }
+
+                order.OrderDate = DateTime.Now;
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+                
+                Console.WriteLine($"✅ Order created successfully with ID: {order.Id}");
+                return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error creating order: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                return StatusCode(500, new { message = "Lỗi khi tạo đơn hàng", error = ex.Message });
+            }
         }
     }
 }

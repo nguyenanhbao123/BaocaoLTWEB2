@@ -31,7 +31,7 @@
                             <td class="text-danger"><strong>@order.TotalAmount.ToString("N0") đ</strong></td>
                             <td>
                                 @{
-                                    var badgeClass = order.Status switch
+                                    var badgeClass = order.Status.ToString() switch
                                     {
                                         "Pending" => "bg-warning",
                                         "Confirmed" => "bg-info",
@@ -41,7 +41,7 @@
                                         "Cancelled" => "bg-danger",
                                         _ => "bg-secondary"
                                     };
-                                    var statusText = order.Status switch
+                                    var statusText = order.Status.ToString() switch
                                     {
                                         "Pending" => "Chờ xác nhận",
                                         "Confirmed" => "Đã xác nhận",
@@ -49,7 +49,7 @@
                                         "Shipping" => "Đang giao",
                                         "Delivered" => "Đã giao",
                                         "Cancelled" => "Đã hủy",
-                                        _ => order.Status
+                                        _ => order.Status.ToString()
                                     };
                                 }
                                 <span class="badge @badgeClass">@statusText</span>

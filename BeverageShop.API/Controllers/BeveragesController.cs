@@ -67,6 +67,7 @@ namespace BeverageShop.API.Controllers
             existing.Name = beverage.Name;
             existing.Type = beverage.Type;
             existing.Category = beverage.Category;
+            existing.Brand = beverage.Brand;
             existing.Price = beverage.Price;
             existing.Size = beverage.Size;
             existing.Description = beverage.Description;
@@ -109,6 +110,7 @@ namespace BeverageShop.API.Controllers
         public async Task<ActionResult<IEnumerable<Beverage>>> FilterBeverages(
             [FromQuery] string? category = null,
             [FromQuery] string? type = null,
+            [FromQuery] string? brand = null,
             [FromQuery] decimal? minPrice = null,
             [FromQuery] decimal? maxPrice = null,
             [FromQuery] string? size = null,
@@ -127,6 +129,11 @@ namespace BeverageShop.API.Controllers
             if (!string.IsNullOrEmpty(type))
             {
                 query = query.Where(b => b.Type == type);
+            }
+
+            if (!string.IsNullOrEmpty(brand))
+            {
+                query = query.Where(b => b.Brand == brand);
             }
 
             if (minPrice.HasValue)

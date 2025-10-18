@@ -12,12 +12,22 @@ namespace BeverageShop.MVC.Models
         public decimal TotalAmount { get; set; }
         public string? VoucherCode { get; set; }
         public decimal DiscountAmount { get; set; } = 0;
-        public DateTime OrderDate { get; set; }
-        public string Status { get; set; } = "Pending";
+        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public string PaymentMethod { get; set; } = "COD";
-        public bool IsPaid { get; set; }
+        public bool IsPaid { get; set; } = false;
         public DateTime? PaidDate { get; set; }
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    }
+
+    public enum OrderStatus
+    {
+        Pending,
+        Confirmed,
+        Processing,
+        Shipping,
+        Delivered,
+        Cancelled
     }
 
     public class OrderItem

@@ -43,34 +43,6 @@
                     </div>
                 </div>
 
-                <!-- Age Range -->
-                <div class="filter-section">
-                    <label class="fw-bold">Tuổi</label>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <select id="minAge" class="form-select form-select-sm">
-                                <option value="">Từ</option>
-                                <option value="0">0 tuổi</option>
-                                <option value="1">1 tuổi</option>
-                                <option value="2">2 tuổi</option>
-                                <option value="3">3 tuổi</option>
-                                <option value="4">4 tuổi</option>
-                                <option value="5">5 tuổi+</option>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <select id="maxAge" class="form-select form-select-sm">
-                                <option value="">Đến</option>
-                                <option value="1">1 tuổi</option>
-                                <option value="2">2 tuổi</option>
-                                <option value="3">3 tuổi</option>
-                                <option value="5">5 tuổi</option>
-                                <option value="10">10 tuổi+</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Sort -->
                 <div class="filter-section">
                     <label class="fw-bold">Sắp xếp</label>
@@ -80,7 +52,7 @@
                         <option value="price-asc">Giá thấp → cao</option>
                         <option value="price-desc">Giá cao → thấp</option>
                         <option value="date-desc">Mới nhất</option>
-                        <option value="age-asc">Trẻ nhất</option>
+                        <option value="date-asc">Cũ nhất</option>
                     </select>
                 </div>
 
@@ -118,6 +90,7 @@
 
             <!-- Category Pills -->
             <div class="mb-4">
+                <h5 class="mb-3"><i class="bi bi-grid"></i> Danh mục</h5>
                 <div class="d-flex flex-wrap gap-2">
                     <button class="filter-pill active" data-category="" onclick="selectCategory(this, '')">
                         Tất cả
@@ -131,6 +104,58 @@
                             </button>
                         }
                     }
+                </div>
+            </div>
+
+            <!-- Brand Tabs -->
+            <div class="mb-4">
+                <h5 class="mb-3"><i class="bi bi-tag"></i> Thương hiệu</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="filter-pill brand-pill active" data-brand="" onclick="selectBrand(this, '')">
+                        Tất cả
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Trung Nguyên" onclick="selectBrand(this, 'Trung Nguyên')">
+                        Trung Nguyên
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Highlands" onclick="selectBrand(this, 'Highlands')">
+                        Highlands
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Nescafe" onclick="selectBrand(this, 'Nescafe')">
+                        Nescafe
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Lavazza" onclick="selectBrand(this, 'Lavazza')">
+                        Lavazza
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Starbucks" onclick="selectBrand(this, 'Starbucks')">
+                        Starbucks
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Lipton" onclick="selectBrand(this, 'Lipton')">
+                        Lipton
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Cozy" onclick="selectBrand(this, 'Cozy')">
+                        Cozy
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Dilmah" onclick="selectBrand(this, 'Dilmah')">
+                        Dilmah
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Phúc Long" onclick="selectBrand(this, 'Phúc Long')">
+                        Phúc Long
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Oolong Tea" onclick="selectBrand(this, 'Oolong Tea')">
+                        Oolong Tea
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Tropicana" onclick="selectBrand(this, 'Tropicana')">
+                        Tropicana
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Minute Maid" onclick="selectBrand(this, 'Minute Maid')">
+                        Minute Maid
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Twister" onclick="selectBrand(this, 'Twister')">
+                        Twister
+                    </button>
+                    <button class="filter-pill brand-pill" data-brand="Vinamilk" onclick="selectBrand(this, 'Vinamilk')">
+                        Vinamilk
+                    </button>
                 </div>
             </div>
 
@@ -148,9 +173,16 @@
                         <div class="col-md-6 col-lg-4 mb-4">
                             <div class="card product-card h-100">
                                 <div class="position-relative">
-                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                        <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
-                                    </div>
+                                    @if (!string.IsNullOrEmpty(beverage.ImageUrl))
+                                    {
+                                        <img src="@beverage.ImageUrl" class="card-img-top" alt="@beverage.Name" style="height: 200px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                            <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                                        </div>
+                                    }
                                     @if (userId.HasValue)
                                     {
                                         <button class="btn btn-sm btn-wishlist position-absolute top-0 end-0 m-2" 
@@ -164,7 +196,11 @@
                                 <div class="card-body">
                                     <h5 class="card-title">@beverage.Name</h5>
                                     <p class="card-text small">
-                                        <span class="badge bg-secondary">@beverage.Type</span>
+                                        <span class="badge bg-primary">@beverage.Category</span>
+                                        @if (!string.IsNullOrEmpty(beverage.Brand))
+                                        {
+                                            <span class="badge bg-secondary">@beverage.Brand</span>
+                                        }
                                         <span class="badge bg-info">@beverage.Size</span>
                                     </p>
                                     <p class="card-text text-truncate" style="max-height: 3em;">@beverage.Description</p>
@@ -217,9 +253,10 @@
 
 @section Scripts {
 <script>
-    const API_URL = 'http://localhost:5000';
+    const API_URL = 'https://localhost:7000';
     const userId = @(userId.HasValue ? userId.Value.ToString() : "null");
     let currentCategory = '';
+    let currentBrand = '';
 
     // Load wishlist status on page load
     document.addEventListener('DOMContentLoaded', async () => {
@@ -313,9 +350,16 @@
 
     // Filter Functions
     function selectCategory(button, category) {
-        document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.filter-pill:not(.brand-pill)').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
         currentCategory = category;
+        applyFilters();
+    }
+
+    function selectBrand(button, brand) {
+        document.querySelectorAll('.brand-pill').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        currentBrand = brand;
         applyFilters();
     }
 
@@ -323,16 +367,12 @@
         const params = new URLSearchParams();
         
         if (currentCategory) params.append('category', currentCategory);
+        if (currentBrand) params.append('brand', currentBrand);
         
         const minPrice = document.getElementById('minPrice').value;
         const maxPrice = document.getElementById('maxPrice').value;
         if (minPrice) params.append('minPrice', minPrice);
         if (maxPrice) params.append('maxPrice', maxPrice);
-        
-        const minAge = document.getElementById('minAge').value;
-        const maxAge = document.getElementById('maxAge').value;
-        if (minAge) params.append('minAge', minAge);
-        if (maxAge) params.append('maxAge', maxAge);
         
         const keyword = document.getElementById('searchKeyword').value;
         if (keyword) params.append('keyword', keyword);
@@ -359,14 +399,16 @@
         document.getElementById('maxPrice').value = '';
         document.getElementById('priceRange').value = 20000000;
         document.getElementById('maxPriceLabel').textContent = '20tr';
-        document.getElementById('minAge').value = '';
-        document.getElementById('maxAge').value = '';
         document.getElementById('sortBy').value = 'name-asc';
         document.getElementById('searchKeyword').value = '';
         
-        document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.filter-pill:not(.brand-pill)').forEach(btn => btn.classList.remove('active'));
         document.querySelector('.filter-pill[data-category=""]').classList.add('active');
         currentCategory = '';
+        
+        document.querySelectorAll('.brand-pill').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('.brand-pill[data-brand=""]').classList.add('active');
+        currentBrand = '';
         
         applyFilters();
     }
@@ -379,7 +421,7 @@
         const container = document.getElementById('beverageList');
         const resultsCount = document.getElementById('resultsCount');
         
-        resultsCount.textContent = `Hiển thị ${ beverages.length} kết quả`;
+        resultsCount.textContent = `Hiển thị ${beverages.length} kết quả`;
         
         if (beverages.length === 0) {
             container.innerHTML = `
@@ -392,13 +434,16 @@
             return;
         }
         
-        container.innerHTML = beverages.map(animal => `
+        container.innerHTML = beverages.map(beverage => `
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card product-card h-100">
                     <div class="position-relative">
-                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
-                        </div>
+                        ${beverage.imageUrl && beverage.imageUrl !== '/images/default.jpg' 
+                            ? `<img src="${beverage.imageUrl}" class="card-img-top" alt="${beverage.name}" style="height: 200px; object-fit: cover;">` 
+                            : `<div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-cup-straw" style="font-size: 3rem; color: #ccc;"></i>
+                              </div>`
+                        }
                         ${userId ? `
                             <button class="btn btn-sm btn-wishlist position-absolute top-0 end-0 m-2" 
                                     onclick="toggleWishlist(${beverage.id}, this)" 
@@ -411,13 +456,14 @@
                     <div class="card-body">
                         <h5 class="card-title">${beverage.name}</h5>
                         <p class="card-text small">
-                            <span class="badge bg-secondary">${beverage\.Type}</span>
-                            <span class="badge bg-info">${beverage\.Size} tuổi</span>
+                            ${beverage.category ? `<span class="badge bg-secondary">${beverage.category}</span>` : ''}
+                            ${beverage.brand ? `<span class="badge bg-primary">${beverage.brand}</span>` : ''}
+                            ${beverage.size ? `<span class="badge bg-info">${beverage.size}</span>` : ''}
                         </p>
-                        <p class="card-text text-truncate" style="max-height: 3em;">${beverage.description}</p>
+                        <p class="card-text text-truncate" style="max-height: 3em;">${beverage.description || ''}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="text-danger fw-bold fs-5">${beverage.price.toLocaleString()}đ</span>
-                            ${beverage.isAvailable && animal.stock > 0 
+                            ${beverage.isAvailable && beverage.stock > 0 
                                 ? `<span class="badge bg-success">Còn ${beverage.stock}</span>`
                                 : `<span class="badge bg-danger">Hết hàng</span>`
                             }
@@ -427,7 +473,7 @@
                         <a href="/Shop/Details/${beverage.id}" class="btn btn-outline-info btn-sm flex-fill">
                             <i class="bi bi-info-circle"></i> Chi tiết
                         </a>
-                        ${beverage.isAvailable && animal.stock > 0 ? `
+                        ${beverage.isAvailable && beverage.stock > 0 ? `
                             <form action="/Shop/AddToCart" method="post" class="flex-fill">
                                 <input type="hidden" name="beverageId" value="${beverage.id}" />
                                 <input type="hidden" name="quantity" value="1" />

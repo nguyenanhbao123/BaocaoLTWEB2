@@ -1,0 +1,86 @@
+@model List<BeverageShop.MVC.Models.Beverage>
+@{
+    ViewData["Title"] = $"Sản phẩm của {ViewBag.BrandName}";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-tag-fill"></i> Sản phẩm của Brand: <span class="badge bg-primary">@ViewBag.BrandName</span></h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Brands">Thương hiệu</a></li>
+                    <li class="breadcrumb-item active">@ViewBag.BrandName</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Brands" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="row">
+                    @foreach (var beverage in Model)
+                    {
+                        <div class="col-md-4 col-lg-3 mb-4">
+                            <div class="card h-100">
+                                @if (!string.IsNullOrEmpty(beverage.ImageUrl))
+                                {
+                                    <img src="@beverage.ImageUrl" class="card-img-top" alt="@beverage.Name" style="height: 200px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="bi bi-cup-straw display-1 text-muted"></i>
+                                    </div>
+                                }
+                                <div class="card-body">
+                                    <h6 class="card-title">@beverage.Name</h6>
+                                    <p class="card-text small">
+                                        <span class="badge bg-primary">@beverage.Category</span>
+                                        <span class="badge bg-info">@beverage.Size</span>
+                                    </p>
+                                    <p class="text-danger fw-bold">@beverage.Price.ToString("N0")đ</p>
+                                    <p class="small mb-0">
+                                        <i class="bi bi-box"></i> Tồn kho: <strong>@beverage.Stock</strong>
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <div class="d-flex gap-2">
+                                        <a asp-action="EditBeverage" asp-route-id="@beverage.Id" class="btn btn-sm btn-outline-warning flex-fill">
+                                            <i class="bi bi-pencil"></i> Sửa
+                                        </a>
+                                        <a asp-controller="Shop" asp-action="Details" asp-route-id="@beverage.Id" 
+                                           class="btn btn-sm btn-outline-info flex-fill" target="_blank">
+                                            <i class="bi bi-eye"></i> Xem
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="mt-3">
+                    <p class="text-muted">
+                        <i class="bi bi-info-circle"></i> Tổng cộng: <strong>@Model.Count</strong> sản phẩm
+                    </p>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <p class="lead mt-3">Không có sản phẩm nào cho brand này</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
