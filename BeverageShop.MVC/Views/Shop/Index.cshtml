@@ -159,12 +159,7 @@
                 </div>
             </div>
 
-            <!-- Results Count -->
-            <div class="mb-3">
-                <small class="text-muted" id="resultsCount">Hiển thị @Model.Count() kết quả</small>
-            </div>
-
-            <!-- Animal List -->
+            <!-- Beverage List -->
             <div class="row" id="beverageList">
                 @if (Model != null && Model.Any())
                 {
@@ -244,6 +239,76 @@
                     </div>
                 }
             </div>
+
+            <!-- Pagination -->
+            @if (ViewBag.TotalPages > 1)
+            {
+                <nav aria-label="Điều hướng trang" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <!-- Previous Button -->
+                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)@(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "" : "&category=" + ViewBag.SelectedCategory)@(string.IsNullOrEmpty(ViewBag.SelectedBrand) ? "" : "&brand=" + ViewBag.SelectedBrand)" aria-label="Previous">
+                                <span aria-hidden="true">&laquo; Trước</span>
+                            </a>
+                        </li>
+
+                        @{
+                            int currentPage = ViewBag.CurrentPage;
+                            int totalPages = ViewBag.TotalPages;
+                            int startPage = Math.Max(1, currentPage - 2);
+                            int endPage = Math.Min(totalPages, currentPage + 2);
+                        }
+
+                        <!-- First Page -->
+                        @if (startPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1@(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "" : "&category=" + ViewBag.SelectedCategory)@(string.IsNullOrEmpty(ViewBag.SelectedBrand) ? "" : "&brand=" + ViewBag.SelectedBrand)">1</a>
+                            </li>
+                            @if (startPage > 2)
+                            {
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            }
+                        }
+
+                        <!-- Page Numbers -->
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="?page=@i@(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "" : "&category=" + ViewBag.SelectedCategory)@(string.IsNullOrEmpty(ViewBag.SelectedBrand) ? "" : "&brand=" + ViewBag.SelectedBrand)">@i</a>
+                            </li>
+                        }
+
+                        <!-- Last Page -->
+                        @if (endPage < totalPages)
+                        {
+                            @if (endPage < totalPages - 1)
+                            {
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            }
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@totalPages@(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "" : "&category=" + ViewBag.SelectedCategory)@(string.IsNullOrEmpty(ViewBag.SelectedBrand) ? "" : "&brand=" + ViewBag.SelectedBrand)">@totalPages</a>
+                            </li>
+                        }
+
+                        <!-- Next Button -->
+                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                            <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)@(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "" : "&category=" + ViewBag.SelectedCategory)@(string.IsNullOrEmpty(ViewBag.SelectedBrand) ? "" : "&brand=" + ViewBag.SelectedBrand)" aria-label="Next">
+                                <span aria-hidden="true">Sau &raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- Quick Jump -->
+                <div class="d-flex justify-content-center align-items-center gap-2 mt-3">
+                    <span class="small text-muted">Đi đến trang:</span>
+                    <input type="number" id="jumpToPage" class="form-control form-control-sm" style="width: 80px;" min="1" max="@ViewBag.TotalPages" value="@ViewBag.CurrentPage">
+                    <button class="btn btn-sm btn-primary" onclick="jumpToPage()">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -524,6 +589,38 @@
         
         setTimeout(() => toast.remove(), 3000);
     }
+
+    // Pagination Functions
+    function jumpToPage() {
+        const pageInput = document.getElementById('jumpToPage');
+        const page = parseInt(pageInput.value);
+        const maxPage = parseInt(pageInput.max);
+        
+        if (page >= 1 && page <= maxPage) {
+            const category = '@ViewBag.SelectedCategory';
+            const brand = '@ViewBag.SelectedBrand';
+            let url = `?page=${page}`;
+            
+            if (category) url += `&category=${category}`;
+            if (brand) url += `&brand=${brand}`;
+            
+            window.location.href = url;
+        } else {
+            showToast(`Vui lòng nhập số trang từ 1 đến ${maxPage}`, 'warning');
+        }
+    }
+
+    // Allow Enter key to jump to page
+    document.addEventListener('DOMContentLoaded', () => {
+        const jumpInput = document.getElementById('jumpToPage');
+        if (jumpInput) {
+            jumpInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    jumpToPage();
+                }
+            });
+        }
+    });
 </script>
 }
 

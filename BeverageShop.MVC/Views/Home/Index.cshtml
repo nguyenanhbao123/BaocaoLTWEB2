@@ -94,114 +94,47 @@
     </div>
     
     <div class="row g-3">
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <div class="position-relative">
-                    <img src="https://via.placeholder.com/200x200?text=Cafe" class="card-img-top" alt="Product">
-                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">-30%</span>
+        @if (ViewBag.CoffeeBeverages != null && ViewBag.CoffeeBeverages.Count > 0)
+        {
+            foreach (var beverage in ViewBag.CoffeeBeverages)
+            {
+                <div class="col-6 col-md-3 col-lg-2">
+                    <a href="/Shop/Details/@beverage.Id" class="text-decoration-none text-dark">
+                        <div class="product-card card h-100 border-0 shadow-sm">
+                            <div class="position-relative">
+                                <img src="@(!string.IsNullOrEmpty(beverage.ImageUrl) ? beverage.ImageUrl : "https://via.placeholder.com/200x200?text=No+Image")" 
+                                     class="card-img-top" 
+                                     alt="@beverage.Name"
+                                     loading="lazy"
+                                     style="height: 200px; object-fit: cover;">
+                                @if (!string.IsNullOrEmpty(beverage.Brand))
+                                {
+                                    <span class="badge bg-primary position-absolute top-0 start-0 m-2">@beverage.Brand</span>
+                                }
+                            </div>
+                            <div class="card-body p-2">
+                                <h6 class="card-title small fw-bold mb-1" style="min-height: 2.4em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@beverage.Name</h6>
+                                <p class="text-danger fw-bold mb-0">@beverage.Price.ToString("N0")đ</p>
+                                <p class="text-muted small mb-1">&nbsp;</p>
+                                <div class="d-flex gap-1">
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star text-warning small"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Cà phê Trung Nguyên Legend</h6>
-                    <p class="text-danger fw-bold mb-0">299.000đ</p>
-                    <p class="text-muted small text-decoration-line-through mb-1">450.000đ</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                    </div>
-                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <p class="text-center text-muted">Chưa có sản phẩm trong danh mục này</p>
             </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <div class="position-relative">
-                    <img src="https://via.placeholder.com/200x200?text=Espresso" class="card-img-top" alt="Product">
-                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">-25%</span>
-                </div>
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Highlands Espresso</h6>
-                    <p class="text-danger fw-bold mb-0">189.000đ</p>
-                    <p class="text-muted small text-decoration-line-through mb-1">250.000đ</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <img src="https://via.placeholder.com/200x200?text=Nescafe" class="card-img-top" alt="Product">
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Nescafe Classic</h6>
-                    <p class="text-danger fw-bold mb-0">159.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <img src="https://via.placeholder.com/200x200?text=Lavazza" class="card-img-top" alt="Product">
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Lavazza Premium</h6>
-                    <p class="text-danger fw-bold mb-0">399.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <img src="https://via.placeholder.com/200x200?text=Starbucks" class="card-img-top" alt="Product">
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Starbucks Pike Place</h6>
-                    <p class="text-danger fw-bold mb-0">349.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-half text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <img src="https://via.placeholder.com/200x200?text=G7" class="card-img-top" alt="Product">
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">G7 3in1 Cappuccino</h6>
-                    <p class="text-danger fw-bold mb-0">129.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+        }
     </div>
 </section>
 
@@ -228,118 +161,51 @@
         <a href="/Shop/Index?brand=Cozy" class="badge bg-light text-dark px-3 py-2">Cozy</a>
         <a href="/Shop/Index?brand=Dilmah" class="badge bg-light text-dark px-3 py-2">Dilmah</a>
         <a href="/Shop/Index?brand=Phúc Long" class="badge bg-light text-dark px-3 py-2">Phúc Long</a>
-        <a href="/Shop/Index?brand=Oolong Tea" class="badge bg-light text-dark px-3 py-2">Oolong Tea</a>
+        <a href="/Shop/Index?brand=Trà Việt" class="badge bg-light text-dark px-3 py-2">Trà Việt</a>
     </div>
     
     <div class="row g-3">
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <div class="position-relative">
-                    <img src="https://via.placeholder.com/200x200?text=Tra+Oolong" class="card-img-top" alt="Product">
-                    <span class="badge bg-success position-absolute top-0 start-0 m-2">NEW</span>
+        @if (ViewBag.TeaBeverages != null && ViewBag.TeaBeverages.Count > 0)
+        {
+            foreach (var beverage in ViewBag.TeaBeverages)
+            {
+                <div class="col-6 col-md-3 col-lg-2">
+                    <a href="/Shop/Details/@beverage.Id" class="text-decoration-none text-dark">
+                        <div class="product-card card h-100 border-0 shadow-sm">
+                            <div class="position-relative">
+                                <img src="@(!string.IsNullOrEmpty(beverage.ImageUrl) ? beverage.ImageUrl : "https://via.placeholder.com/200x200?text=No+Image")" 
+                                     class="card-img-top" 
+                                     alt="@beverage.Name"
+                                     loading="lazy"
+                                     style="height: 200px; object-fit: cover;">
+                                @if (!string.IsNullOrEmpty(beverage.Brand))
+                                {
+                                    <span class="badge bg-success position-absolute top-0 start-0 m-2">@beverage.Brand</span>
+                                }
+                            </div>
+                            <div class="card-body p-2">
+                                <h6 class="card-title small fw-bold mb-1" style="min-height: 2.4em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@beverage.Name</h6>
+                                <p class="text-danger fw-bold mb-0">@beverage.Price.ToString("N0")đ</p>
+                                <p class="text-muted small mb-1">&nbsp;</p>
+                                <div class="d-flex gap-1">
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star text-warning small"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Trà Oolong Cao Cấp</h6>
-                    <p class="text-danger fw-bold mb-0">249.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                    </div>
-                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <p class="text-center text-muted">Chưa có sản phẩm trong danh mục này</p>
             </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <img src="https://via.placeholder.com/200x200?text=Lipton" class="card-img-top" alt="Product">
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Lipton Yellow Label</h6>
-                    <p class="text-danger fw-bold mb-0">89.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <img src="https://via.placeholder.com/200x200?text=Phuc+Long" class="card-img-top" alt="Product">
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Phúc Long Oolong</h6>
-                    <p class="text-danger fw-bold mb-0">199.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <img src="https://via.placeholder.com/200x200?text=Dilmah" class="card-img-top" alt="Product">
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Dilmah Earl Grey</h6>
-                    <p class="text-danger fw-bold mb-0">149.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-half text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <img src="https://via.placeholder.com/200x200?text=Cozy" class="card-img-top" alt="Product">
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Cozy Trà Sữa</h6>
-                    <p class="text-danger fw-bold mb-0">69.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <div class="position-relative">
-                    <img src="https://via.placeholder.com/200x200?text=Tra+Xanh" class="card-img-top" alt="Product">
-                    <span class="badge bg-info position-absolute top-0 start-0 m-2">HOT</span>
-                </div>
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Trà Xanh Matcha</h6>
-                    <p class="text-danger fw-bold mb-0">179.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+        }
     </div>
 </section>
 
@@ -351,47 +217,54 @@
     </div>
     
     <div class="brand-filter mb-3 d-flex gap-2 flex-wrap">
+        <a href="/Shop/Index?brand=Fresh Juice" class="badge bg-light text-dark px-3 py-2">Fresh Juice</a>
+        <a href="/Shop/Index?brand=Smoothie House" class="badge bg-light text-dark px-3 py-2">Smoothie House</a>
         <a href="/Shop/Index?brand=Tropicana" class="badge bg-light text-dark px-3 py-2">Tropicana</a>
         <a href="/Shop/Index?brand=Minute Maid" class="badge bg-light text-dark px-3 py-2">Minute Maid</a>
-        <a href="/Shop/Index?brand=Twister" class="badge bg-light text-dark px-3 py-2">Twister</a>
-        <a href="/Shop/Index?brand=Vinamilk" class="badge bg-light text-dark px-3 py-2">Vinamilk</a>
     </div>
     
     <div class="row g-3">
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <img src="https://via.placeholder.com/200x200?text=Tropicana" class="card-img-top" alt="Product">
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Tropicana Cam</h6>
-                    <p class="text-danger fw-bold mb-0">35.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star text-warning small"></i>
-                    </div>
+        @if (ViewBag.JuiceBeverages != null && ViewBag.JuiceBeverages.Count > 0)
+        {
+            foreach (var beverage in ViewBag.JuiceBeverages)
+            {
+                <div class="col-6 col-md-3 col-lg-2">
+                    <a href="/Shop/Details/@beverage.Id" class="text-decoration-none text-dark">
+                        <div class="product-card card h-100 border-0 shadow-sm">
+                            <div class="position-relative">
+                                <img src="@(!string.IsNullOrEmpty(beverage.ImageUrl) ? beverage.ImageUrl : "https://via.placeholder.com/200x200?text=No+Image")" 
+                                     class="card-img-top" 
+                                     alt="@beverage.Name"
+                                     loading="lazy"
+                                     style="height: 200px; object-fit: cover;">
+                                @if (!string.IsNullOrEmpty(beverage.Brand))
+                                {
+                                    <span class="badge bg-info position-absolute top-0 start-0 m-2">@beverage.Brand</span>
+                                }
+                            </div>
+                            <div class="card-body p-2">
+                                <h6 class="card-title small fw-bold mb-1" style="min-height: 2.4em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@beverage.Name</h6>
+                                <p class="text-danger fw-bold mb-0">@beverage.Price.ToString("N0")đ</p>
+                                <p class="text-muted small mb-1">&nbsp;</p>
+                                <div class="d-flex gap-1">
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star-fill text-warning small"></i>
+                                    <i class="bi bi-star-half text-warning small"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <p class="text-center text-muted">Chưa có sản phẩm trong danh mục này</p>
             </div>
-        </div>
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="product-card card h-100 border-0 shadow-sm">
-                <img src="https://via.placeholder.com/200x200?text=Minute+Maid" class="card-img-top" alt="Product">
-                <div class="card-body p-2">
-                    <h6 class="card-title small fw-bold mb-1">Minute Maid Pulpy</h6>
-                    <p class="text-danger fw-bold mb-0">29.000đ</p>
-                    <p class="text-muted small mb-1">&nbsp;</p>
-                    <div class="d-flex gap-1">
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <i class="bi bi-star-half text-warning small"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+        }
     </div>
 </section>
 

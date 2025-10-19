@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using BeverageShop.API.Models;
 using BeverageShop.API.Data;
 
@@ -10,23 +11,38 @@ namespace BeverageShop.API.Controllers
     public class BeveragesController : ControllerBase
     {
         private readonly BeverageShopDbContext _context;
+        private readonly IMemoryCache _cache;
+        private const string BEVERAGES_CACHE_KEY = "all_beverages";
+        private const int CACHE_DURATION_MINUTES = 5;
 
-        public BeveragesController(BeverageShopDbContext context)
+        public BeveragesController(BeverageShopDbContext context, IMemoryCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         [HttpGet]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new[] { "category" })]
         public async Task<ActionResult<IEnumerable<Beverage>>> GetBeverages([FromQuery] string? category = null)
         {
-            var query = _context.Beverages.AsQueryable();
-            
-            if (!string.IsNullOrEmpty(category))
+            // Try get from cache first
+            if (!_cache.TryGetValue(BEVERAGES_CACHE_KEY, out List<Beverage>? allBeverages))
             {
-                query = query.Where(b => b.Category == category);
+                // Cache miss - get from database
+                allBeverages = await _context.Beverages.ToListAsync();
+                
+                // Store in cache for 5 minutes
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(CACHE_DURATION_MINUTES));
+                
+                _cache.Set(BEVERAGES_CACHE_KEY, allBeverages, cacheOptions);
             }
             
-            var beverages = await query.ToListAsync();
+            // Filter by category if provided
+            var beverages = string.IsNullOrEmpty(category) 
+                ? allBeverages 
+                : allBeverages?.Where(b => b.Category == category).ToList() ?? new List<Beverage>();
+            
             return Ok(beverages);
         }
 

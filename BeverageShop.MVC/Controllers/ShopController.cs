@@ -8,21 +8,47 @@ namespace BeverageShop.MVC.Controllers
     {
         private readonly BeverageApiService _apiService;
         private const string CartSessionKey = "ShoppingCart";
+        private const int PageSize = 6; // Số sản phẩm mỗi trang
 
         public ShopController(BeverageApiService apiService)
         {
             _apiService = apiService;
         }
 
-        public async Task<IActionResult> Index(string? category)
+        public async Task<IActionResult> Index(string? category, string? brand, int page = 1)
         {
-            var beverages = await _apiService.GetBeveragesAsync(category);
+            var allBeverages = await _apiService.GetBeveragesAsync(category);
             var categories = await _apiService.GetCategoriesAsync();
             
+            // Filter by brand if provided
+            if (!string.IsNullOrEmpty(brand))
+            {
+                allBeverages = allBeverages.Where(b => b.Brand == brand).ToList();
+            }
+            
+            // Calculate pagination
+            var totalItems = allBeverages.Count;
+            var totalPages = (int)Math.Ceiling(totalItems / (double)PageSize);
+            
+            // Ensure page is within valid range
+            page = Math.Max(1, Math.Min(page, totalPages == 0 ? 1 : totalPages));
+            
+            // Get items for current page
+            var pagedBeverages = allBeverages
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+            
+            // Pass pagination info to view
             ViewBag.Categories = categories;
             ViewBag.SelectedCategory = category;
+            ViewBag.SelectedBrand = brand;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.PageSize = PageSize;
             
-            return View(beverages);
+            return View(pagedBeverages);
         }
 
         public async Task<IActionResult> Details(int id)

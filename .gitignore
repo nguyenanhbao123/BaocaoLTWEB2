@@ -6,3 +6,9 @@ create_brands_table.sql
 run.ps1
 test-order.ps1
 run.ps1
+*.sql
+*.ps1
+*.log
+*.tmp  
+*.txt
+*.md

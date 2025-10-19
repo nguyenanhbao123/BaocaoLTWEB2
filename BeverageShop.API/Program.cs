@@ -10,6 +10,18 @@ try
     builder.Services.AddDbContext<BeverageShopDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+    // Add Memory Cache
+    builder.Services.AddMemoryCache();
+
+    // Add Response Caching
+    builder.Services.AddResponseCaching();
+
+    // Add Response Compression
+    builder.Services.AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+    });
+
     // Add services to the container
     builder.Services.AddControllers();
     builder.Services.AddSignalR();
@@ -54,6 +66,12 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection(); // Disabled for HTTP testing
+
+// Use Response Compression (must be before static files)
+app.UseResponseCompression();
+
+// Use Response Caching
+app.UseResponseCaching();
 
 app.UseCors("AllowMVC");
 
