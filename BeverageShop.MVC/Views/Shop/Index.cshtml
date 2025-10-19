@@ -325,6 +325,31 @@
 
     // Load wishlist status on page load
     document.addEventListener('DOMContentLoaded', async () => {
+        // Read current filters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        currentCategory = urlParams.get('category') || '';
+        currentBrand = urlParams.get('brand') || '';
+        
+        // Set active state for category pills
+        if (currentCategory) {
+            document.querySelectorAll('.filter-pill:not(.brand-pill)').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-category') === currentCategory) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        // Set active state for brand pills
+        if (currentBrand) {
+            document.querySelectorAll('.brand-pill').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-brand') === currentBrand) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
         if (userId) {
             await loadWishlistStatus();
         }
@@ -447,16 +472,8 @@
         params.append('sortBy', sortField);
         params.append('order', sortOrder);
         
-        try {
-            const response = await fetch(`${API_URL}/api/beverages/filter?${params}`);
-            const beverages = await response.json();
-            
-            renderBeverages(beverages);
-            closeFilterSidebar();
-        } catch (error) {
-            console.error('Error applying filters:', error);
-            showToast('Có lỗi khi lọc dữ liệu!', 'error');
-        }
+        // Reload page with filters (server-side filtering)
+        window.location.href = `/Shop?${params}`;
     }
 
     function resetFilters() {
@@ -500,44 +517,44 @@
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card product-card h-100">
                     <div class="position-relative">
-                        ${beverage.imageUrl && beverage.imageUrl !== '/images/default.jpg' 
-                            ? `<img src="${beverage.imageUrl}" class="card-img-top" alt="${beverage.name}" style="height: 200px; object-fit: cover;">` 
+                        ${beverage.ImageUrl && beverage.ImageUrl !== '/images/default.jpg' 
+                            ? `<img src="${beverage.ImageUrl}" class="card-img-top" alt="${beverage.Name}" style="height: 200px; object-fit: cover;">` 
                             : `<div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
                                 <i class="bi bi-cup-straw" style="font-size: 3rem; color: #ccc;"></i>
                               </div>`
                         }
                         ${userId ? `
                             <button class="btn btn-sm btn-wishlist position-absolute top-0 end-0 m-2" 
-                                    onclick="toggleWishlist(${beverage.id}, this)" 
-                                    data-beverage-id="${beverage.id}"
+                                    onclick="toggleWishlist(${beverage.Id}, this)" 
+                                    data-beverage-id="${beverage.Id}"
                                     title="Thêm vào yêu thích">
                                 <i class="bi bi-heart"></i>
                             </button>
                         ` : ''}
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">${beverage.name}</h5>
+                        <h5 class="card-title">${beverage.Name || 'Không có tên'}</h5>
                         <p class="card-text small">
-                            ${beverage.category ? `<span class="badge bg-secondary">${beverage.category}</span>` : ''}
-                            ${beverage.brand ? `<span class="badge bg-primary">${beverage.brand}</span>` : ''}
-                            ${beverage.size ? `<span class="badge bg-info">${beverage.size}</span>` : ''}
+                            ${beverage.Category ? `<span class="badge bg-secondary">${beverage.Category}</span>` : ''}
+                            ${beverage.Brand ? `<span class="badge bg-primary">${beverage.Brand}</span>` : ''}
+                            ${beverage.Size ? `<span class="badge bg-info">${beverage.Size}</span>` : ''}
                         </p>
-                        <p class="card-text text-truncate" style="max-height: 3em;">${beverage.description || ''}</p>
+                        <p class="card-text text-truncate" style="max-height: 3em;">${beverage.Description || ''}</p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-danger fw-bold fs-5">${beverage.price.toLocaleString()}đ</span>
-                            ${beverage.isAvailable && beverage.stock > 0 
-                                ? `<span class="badge bg-success">Còn ${beverage.stock}</span>`
+                            <span class="text-danger fw-bold fs-5">${(beverage.Price || 0).toLocaleString()}đ</span>
+                            ${beverage.IsAvailable && (beverage.Stock || 0) > 0 
+                                ? `<span class="badge bg-success">Còn ${beverage.Stock || 0}</span>`
                                 : `<span class="badge bg-danger">Hết hàng</span>`
                             }
                         </div>
                     </div>
                     <div class="card-footer d-flex gap-2">
-                        <a href="/Shop/Details/${beverage.id}" class="btn btn-outline-info btn-sm flex-fill">
+                        <a href="/Shop/Details/${beverage.Id || 0}" class="btn btn-outline-info btn-sm flex-fill">
                             <i class="bi bi-info-circle"></i> Chi tiết
                         </a>
-                        ${beverage.isAvailable && beverage.stock > 0 ? `
+                        ${beverage.IsAvailable && (beverage.Stock || 0) > 0 ? `
                             <form action="/Shop/AddToCart" method="post" class="flex-fill">
-                                <input type="hidden" name="beverageId" value="${beverage.id}" />
+                                <input type="hidden" name="beverageId" value="${beverage.Id || 0}" />
                                 <input type="hidden" name="quantity" value="1" />
                                 <button type="submit" class="btn btn-primary btn-sm w-100">
                                     <i class="bi bi-cart-plus"></i> Giỏ hàng

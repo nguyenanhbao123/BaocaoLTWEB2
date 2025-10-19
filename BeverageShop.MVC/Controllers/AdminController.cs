@@ -350,11 +350,11 @@ namespace BeverageShop.MVC.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                var brands = await response.Content.ReadFromJsonAsync<List<dynamic>>();
+                var brands = await response.Content.ReadFromJsonAsync<List<BrandWithCount>>();
                 return View("Brand/Brands", brands);
             }
 
-            return View("Brand/Brands", new List<dynamic>());
+            return View("Brand/Brands", new List<BrandWithCount>());
         }
 
         public async Task<IActionResult> BeveragesByBrand(string brand)

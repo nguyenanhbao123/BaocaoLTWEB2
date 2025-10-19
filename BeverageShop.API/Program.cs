@@ -42,7 +42,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowMVC", policy =>
     {
-        policy.WithOrigins("http://localhost:5001", "https://localhost:7001", "http://localhost:5002")
+        policy.WithOrigins(
+                "http://localhost:5001", 
+                "https://localhost:7001", 
+                "http://localhost:5002",
+                "https://localhost:7000",  // Allow API itself
+                "http://localhost:5000")   // Allow HTTP API
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials(); // Required for SignalR
