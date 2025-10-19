@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BeverageShop.MVC")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+45f57f70e52a2ab3c373389125870080f60a1ac0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2654f6448ef505dff39404fab4cd9e049a85c512")]
 [assembly: System.Reflection.AssemblyProductAttribute("BeverageShop.MVC")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BeverageShop.MVC")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

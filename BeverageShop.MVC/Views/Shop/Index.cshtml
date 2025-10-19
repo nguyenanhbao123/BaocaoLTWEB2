@@ -484,9 +484,6 @@
 
     function renderBeverages(beverages) {
         const container = document.getElementById('beverageList');
-        const resultsCount = document.getElementById('resultsCount');
-        
-        resultsCount.textContent = `Hiển thị ${beverages.length} kết quả`;
         
         if (beverages.length === 0) {
             container.innerHTML = `
