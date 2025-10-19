@@ -1,0 +1,90 @@
+@model IEnumerable<BeverageShop.MVC.Models.Order>
+
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4"><i class="bi bi-bag-check"></i> Đơn hàng của tôi</h2>
+            
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Ngày đặt</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Thanh toán</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td><strong>#@order.Id</strong></td>
+                                    <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class="text-danger fw-bold">@order.TotalAmount.ToString("N0")đ</td>
+                                    <td>
+                                        @{
+                                            var statusClass = order.Status switch
+                                            {
+                                                OrderStatus.Pending => "bg-warning",
+                                                OrderStatus.Confirmed => "bg-info",
+                                                OrderStatus.Processing => "bg-primary",
+                                                OrderStatus.Shipping => "bg-secondary",
+                                                OrderStatus.Delivered => "bg-success",
+                                                OrderStatus.Cancelled => "bg-danger",
+                                                _ => "bg-secondary"
+                                            };
+                                            
+                                            var statusText = order.Status switch
+                                            {
+                                                OrderStatus.Pending => "Chờ xác nhận",
+                                                OrderStatus.Confirmed => "Đã xác nhận",
+                                                OrderStatus.Processing => "Đang xử lý",
+                                                OrderStatus.Shipping => "Đang giao",
+                                                OrderStatus.Delivered => "Đã giao",
+                                                OrderStatus.Cancelled => "Đã hủy",
+                                                _ => "Không rõ"
+                                            };
+                                        }
+                                        <span class="badge @statusClass">@statusText</span>
+                                    </td>
+                                    <td>
+                                        @if (order.IsPaid)
+                                        {
+                                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Đã thanh toán</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning"><i class="bi bi-clock"></i> Chưa thanh toán</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("OrderDetails", "Account", new { id = order.Id })" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> Chi tiết
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Bạn chưa có đơn hàng nào.
+                    <a href="@Url.Action("Index", "Shop")" class="alert-link">Mua sắm ngay!</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

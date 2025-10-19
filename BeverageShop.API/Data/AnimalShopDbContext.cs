@@ -27,7 +27,13 @@ namespace BeverageShop.API.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure relationships
+            // Configure Order relationships
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.SetNull);  // Nếu xóa User, UserId sẽ = null
+
             modelBuilder.Entity<Order>()
                 .HasMany(o => o.OrderItems)
                 .WithOne()

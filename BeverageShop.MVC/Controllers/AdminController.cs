@@ -60,10 +60,10 @@ namespace BeverageShop.MVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var users = await response.Content.ReadFromJsonAsync<List<User>>();
-                return View(users);
+                return View("Users/Users", users);
             }
 
-            return View(new List<User>());
+            return View("Users/Users", new List<User>());
         }
 
         [HttpPost]
@@ -109,7 +109,7 @@ namespace BeverageShop.MVC.Controllers
         public IActionResult CreateUser()
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
-            return View();
+            return View("Users/CreateUser");
         }
 
         [HttpPost]
@@ -136,7 +136,7 @@ namespace BeverageShop.MVC.Controllers
 
             var error = await response.Content.ReadAsStringAsync();
             TempData["ErrorMessage"] = $"Không thể thêm người dùng! {error}";
-            return View(user);
+            return View("Users/CreateUser", user);
         }
 
         public async Task<IActionResult> EditUser(int id)
@@ -152,7 +152,7 @@ namespace BeverageShop.MVC.Controllers
                 var user = users?.FirstOrDefault(u => u.Id == id);
                 if (user != null)
                 {
-                    return View(user);
+                    return View("Users/EditUser", user);
                 }
             }
 
@@ -175,7 +175,7 @@ namespace BeverageShop.MVC.Controllers
 
             var error = await response.Content.ReadAsStringAsync();
             TempData["ErrorMessage"] = $"Không thể cập nhật người dùng! {error}";
-            return View(user);
+            return View("Users/EditUser", user);
         }
 
         [HttpPost]
@@ -205,7 +205,7 @@ namespace BeverageShop.MVC.Controllers
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
             var beverages = await _apiService.GetBeveragesAsync(null);
-            return View(beverages);
+            return View("Products/Beverages", beverages);
         }
 
         public async Task<IActionResult> CreateBeverage()
@@ -214,7 +214,7 @@ namespace BeverageShop.MVC.Controllers
 
             var categories = await _apiService.GetCategoriesAsync();
             ViewBag.Categories = categories;
-            return View();
+            return View("Products/CreateBeverage");
         }
 
         [HttpPost]
@@ -234,7 +234,7 @@ namespace BeverageShop.MVC.Controllers
             TempData["ErrorMessage"] = "Không thể thêm sản phẩm!";
             var categories = await _apiService.GetCategoriesAsync();
             ViewBag.Categories = categories;
-            return View(beverage);
+            return View("Products/CreateBeverage", beverage);
         }
 
         public async Task<IActionResult> EditBeverage(int id)
@@ -246,7 +246,7 @@ namespace BeverageShop.MVC.Controllers
 
             var categories = await _apiService.GetCategoriesAsync();
             ViewBag.Categories = categories;
-            return View(beverage);
+            return View("Products/EditBeverage", beverage);
         }
 
         [HttpPost]
@@ -264,7 +264,7 @@ namespace BeverageShop.MVC.Controllers
             }
 
             TempData["ErrorMessage"] = "Không thể cập nhật sản phẩm!";
-            return View(beverage);
+            return View("Products/EditBeverage", beverage);
         }
 
         [HttpPost]
@@ -298,10 +298,10 @@ namespace BeverageShop.MVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var orders = await response.Content.ReadFromJsonAsync<List<Order>>();
-                return View(orders);
+                return View("Order/Orders", orders);
             }
 
-            return View(new List<Order>());
+            return View("Order/Orders", new List<Order>());
         }
 
         public async Task<IActionResult> OrderDetails(int id)
@@ -314,7 +314,7 @@ namespace BeverageShop.MVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var order = await response.Content.ReadFromJsonAsync<Order>();
-                return View(order);
+                return View("Order/OrderDetails", order);
             }
 
             return NotFound();
@@ -351,10 +351,10 @@ namespace BeverageShop.MVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var brands = await response.Content.ReadFromJsonAsync<List<dynamic>>();
-                return View(brands);
+                return View("Brand/Brands", brands);
             }
 
-            return View(new List<dynamic>());
+            return View("Brand/Brands", new List<dynamic>());
         }
 
         public async Task<IActionResult> BeveragesByBrand(string brand)
@@ -440,16 +440,16 @@ namespace BeverageShop.MVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var vouchers = await response.Content.ReadFromJsonAsync<List<Voucher>>();
-                return View(vouchers);
+                return View("Vouchers/Vouchers", vouchers);
             }
 
-            return View(new List<Voucher>());
+            return View("Vouchers/Vouchers", new List<Voucher>());
         }
 
         public IActionResult CreateVoucher()
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
-            return View();
+            return View("Vouchers/CreateVoucher");
         }
 
         [HttpPost]
@@ -480,7 +480,7 @@ namespace BeverageShop.MVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var voucher = await response.Content.ReadFromJsonAsync<Voucher>();
-                return View(voucher);
+                return View("Vouchers/EditVoucher", voucher);
             }
 
             return NotFound();
@@ -501,7 +501,7 @@ namespace BeverageShop.MVC.Controllers
             }
 
             TempData["ErrorMessage"] = "Không thể cập nhật voucher!";
-            return View(voucher);
+            return View("Vouchers/EditVoucher", voucher);
         }
 
         [HttpPost]

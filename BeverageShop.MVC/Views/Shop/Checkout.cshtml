@@ -135,7 +135,7 @@
 @section Scripts {
 <script>
     const API_URL = 'http://localhost:5000';
-    const subtotal = @total;
+    const subtotal = @(total.ToString("F2", System.Globalization.CultureInfo.InvariantCulture));
     let appliedVoucher = null;
 
     async function applyVoucher() {
@@ -150,10 +150,16 @@
         document.getElementById('applyVoucherBtn').innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
         try {
-            const response = await fetch(`${API_URL}/api/voucher/validate/${voucherCode}?orderAmount=${subtotal}`);
+            const url = API_URL + '/api/voucher/validate/' + encodeURIComponent(voucherCode) + '?orderAmount=' + subtotal;
+            const response = await fetch(url);
+            
+            console.log('Response status:', response.status);
             
             if (response.ok) {
-                const voucher = await response.json();
+                const data = await response.json();
+                console.log('Voucher data:', data);
+                
+                const voucher = data.voucher || data;
                 
                 if (!voucher.isActive) {
                     showVoucherMessage('Mã giảm giá không còn hiệu lực', 'danger');
@@ -167,8 +173,9 @@
                 
                 document.getElementById('appliedVoucherCode').value = voucherCode;
             } else {
-                const error = await response.text();
-                showVoucherMessage(error || 'Mã giảm giá không hợp lệ', 'danger');
+                const errorData = await response.json().catch(() => ({ message: 'Mã giảm giá không hợp lệ' }));
+                console.error('Voucher error:', errorData);
+                showVoucherMessage(errorData.message || 'Mã giảm giá không hợp lệ', 'danger');
             }
         } catch (error) {
             console.error('Error validating voucher:', error);
@@ -183,42 +190,49 @@
         if (!appliedVoucher) return;
 
         let discount = 0;
+        const voucherType = appliedVoucher.type;
+        console.log('Voucher type:', voucherType, 'Value:', appliedVoucher.value);
 
-        if (appliedVoucher.type === 'Percentage') {
+        if (voucherType === 0 || voucherType === 'Percentage') {
             discount = subtotal * appliedVoucher.value / 100;
-        } else if (appliedVoucher.type === 'FixedAmount') {
+            console.log('Percentage discount:', discount);
+        } else if (voucherType === 1 || voucherType === 'FixedAmount') {
             discount = appliedVoucher.value;
+            console.log('Fixed amount discount:', discount);
         }
 
-        // Apply max discount if exists
-        if (appliedVoucher.maxDiscountAmount && discount > appliedVoucher.maxDiscountAmount) {
+        if (appliedVoucher.maxDiscountAmount && appliedVoucher.maxDiscountAmount > 0 && discount > appliedVoucher.maxDiscountAmount) {
             discount = appliedVoucher.maxDiscountAmount;
+            console.log('Discount capped at:', discount);
         }
 
         const finalTotal = subtotal - discount;
 
-        // Update UI
         document.getElementById('discountRow').style.display = 'table-row';
         document.getElementById('discountValue').textContent = '-' + discount.toLocaleString() + ' đ';
         document.getElementById('finalTotal').textContent = finalTotal.toLocaleString() + ' đ';
         document.getElementById('discountAmount').value = discount;
+        
+        console.log('Final total:', finalTotal, 'Discount:', discount);
     }
 
     function displayVoucherInfo(voucher) {
         document.getElementById('voucherName').textContent = voucher.code;
         
         let description = '';
-        if (voucher.type === 'Percentage') {
-            description = `Giảm ${voucher.value}%`;
-            if (voucher.maxDiscountAmount) {
-                description += ` (tối đa ${voucher.maxDiscountAmount.toLocaleString()}đ)`;
+        const voucherType = voucher.type;
+        
+        if (voucherType === 0 || voucherType === 'Percentage') {
+            description = 'Giảm ' + voucher.value + '%';
+            if (voucher.maxDiscountAmount && voucher.maxDiscountAmount > 0) {
+                description += ' (tối đa ' + voucher.maxDiscountAmount.toLocaleString() + 'đ)';
             }
-        } else {
-            description = `Giảm ${voucher.value.toLocaleString()}đ`;
+        } else if (voucherType === 1 || voucherType === 'FixedAmount') {
+            description = 'Giảm ' + voucher.value.toLocaleString() + 'đ';
         }
         
         if (voucher.description) {
-            description += ` - ${voucher.description}`;
+            description += ' - ' + voucher.description;
         }
         
         document.getElementById('voucherDescription').textContent = description;
@@ -244,14 +258,18 @@
 
     function showVoucherMessage(message, type) {
         const messageDiv = document.getElementById('voucherMessage');
-        messageDiv.innerHTML = `<small class="text-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : type === 'info' ? 'info' : 'danger'}">${message}</small>`;
+        let className = 'text-danger';
+        if (type === 'success') className = 'text-success';
+        else if (type === 'warning') className = 'text-warning';
+        else if (type === 'info') className = 'text-info';
+        
+        messageDiv.innerHTML = '<small class="' + className + '">' + message + '</small>';
         
         setTimeout(() => {
             messageDiv.innerHTML = '';
         }, 3000);
     }
 
-    // Allow Enter key to apply voucher
     document.getElementById('voucherInput').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
