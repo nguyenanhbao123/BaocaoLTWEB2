@@ -325,8 +325,16 @@ namespace BeverageShop.MVC.Controllers
         {
             if (!IsAdmin()) return Unauthorized();
 
+            // Parse string to OrderStatus enum
+            if (!Enum.TryParse<OrderStatus>(status, out var orderStatus))
+            {
+                TempData["ErrorMessage"] = "Trạng thái không hợp lệ!";
+                return RedirectToAction(nameof(OrderDetails), new { id });
+            }
+
             var client = _httpClientFactory.CreateClient();
-            var response = await client.PutAsJsonAsync($"http://localhost:5000/api/admin/orders/{id}/status", new { status });
+            var response = await client.PutAsJsonAsync($"http://localhost:5000/api/admin/orders/{id}/status", 
+                new { Status = orderStatus });
 
             if (response.IsSuccessStatusCode)
             {
@@ -334,7 +342,8 @@ namespace BeverageShop.MVC.Controllers
             }
             else
             {
-                TempData["ErrorMessage"] = "Không thể cập nhật trạng thái!";
+                var errorContent = await response.Content.ReadAsStringAsync();
+                TempData["ErrorMessage"] = $"Không thể cập nhật trạng thái! {errorContent}";
             }
 
             return RedirectToAction(nameof(OrderDetails), new { id });

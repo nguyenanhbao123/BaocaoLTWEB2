@@ -195,12 +195,15 @@
                         <div class="mb-3">
                             <label class="form-label">Trạng thái mới:</label>
                             <select name="status" class="form-select" required>
-                                <option value="Pending" selected="@(Model.Status == BeverageShop.MVC.Models.OrderStatus.Pending)">Chờ xử lý</option>
-                                <option value="Confirmed" selected="@(Model.Status == BeverageShop.MVC.Models.OrderStatus.Confirmed)">Đã xác nhận</option>
-                                <option value="Processing" selected="@(Model.Status == BeverageShop.MVC.Models.OrderStatus.Processing)">Đang xử lý</option>
-                                <option value="Shipping" selected="@(Model.Status == BeverageShop.MVC.Models.OrderStatus.Shipping)">Đang giao hàng</option>
-                                <option value="Delivered" selected="@(Model.Status == BeverageShop.MVC.Models.OrderStatus.Delivered)">Đã giao hàng</option>
-                                <option value="Cancelled" selected="@(Model.Status == BeverageShop.MVC.Models.OrderStatus.Cancelled)">Đã hủy</option>
+                                @{
+                                    var currentStatus = Model.Status.ToString();
+                                }
+                                <option value="Pending" selected="@(currentStatus == "Pending")">Chờ xử lý</option>
+                                <option value="Confirmed" selected="@(currentStatus == "Confirmed")">Đã xác nhận</option>
+                                <option value="Processing" selected="@(currentStatus == "Processing")">Đang xử lý</option>
+                                <option value="Shipping" selected="@(currentStatus == "Shipping")">Đang giao hàng</option>
+                                <option value="Delivered" selected="@(currentStatus == "Delivered")">Đã giao hàng</option>
+                                <option value="Cancelled" selected="@(currentStatus == "Cancelled")">Đã hủy</option>
                             </select>
                         </div>
 

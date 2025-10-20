@@ -10,12 +10,12 @@
             <h1><i class="bi bi-box-seam"></i> Đơn hàng của tôi</h1>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-action="Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Dashboard</a></li>
                     <li class="breadcrumb-item active">Đơn hàng</li>
                 </ol>
             </nav>
         </div>
-        <a asp-action="Dashboard" class="btn btn-outline-secondary">
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Quay lại
         </a>
     </div>
