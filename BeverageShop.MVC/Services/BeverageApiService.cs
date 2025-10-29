@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using BeverageShop.MVC.Models;
@@ -198,13 +199,102 @@ namespace BeverageShop.MVC.Services
             {
                 var json = JsonSerializer.Serialize(review);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                
+
                 var response = await _httpClient.PostAsync("api/reviews", content);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        // Wishlist methods
+        public async Task<bool> AddToWishlistAsync(Wishlist wishlist)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(wishlist);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("api/wishlist", content);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveFromWishlistAsync(int wishlistId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/wishlist/{wishlistId}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> IsInWishlistAsync(int userId, int beverageId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/wishlist/check/{userId}/{beverageId}");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<bool>(content, _jsonOptions);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveFromWishlistByUserAndBeverageAsync(int userId, int beverageId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/wishlist/user/{userId}/beverage/{beverageId}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<List<BeverageShop.MVC.Models.Wishlist>> GetUserWishlistAsync(int userId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/wishlist/user/{userId}");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<BeverageShop.MVC.Models.Wishlist>>(content, _jsonOptions) ?? new List<BeverageShop.MVC.Models.Wishlist>();
+            }
+            catch (Exception)
+            {
+                return new List<BeverageShop.MVC.Models.Wishlist>();
+            }
+        }
+
+        public async Task<BeverageShop.MVC.Models.Wishlist?> CreateWishlistAsync(BeverageShop.MVC.Models.Wishlist wishlist)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(wishlist);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("api/wishlist", content);
+                if (!response.IsSuccessStatusCode) return null;
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<BeverageShop.MVC.Models.Wishlist>(responseContent, _jsonOptions);
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
@@ -237,6 +327,31 @@ namespace BeverageShop.MVC.Services
             }
             catch (Exception)
             {
+                return null;
+            }
+        }
+
+        public async Task<Beverage?> CreateBeverageAsync(Beverage beverage)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(beverage);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("api/beverages", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var err = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"CreateBeverageAsync failed: {response.StatusCode} - {err}");
+                    return null;
+                }
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<Beverage>(responseContent, _jsonOptions);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception in CreateBeverageAsync: {ex.Message}");
                 return null;
             }
         }

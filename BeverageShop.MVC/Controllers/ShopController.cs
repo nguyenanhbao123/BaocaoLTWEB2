@@ -4,7 +4,7 @@ using BeverageShop.MVC.Services;
 
 namespace BeverageShop.MVC.Controllers
 {
-    public class ShopController : Controller
+    public partial class ShopController : Controller
     {
         private readonly BeverageApiService _apiService;
         private const string CartSessionKey = "ShoppingCart";
@@ -153,6 +153,63 @@ namespace BeverageShop.MVC.Controllers
             return RedirectToAction(nameof(Cart));
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddToWishlist(int beverageId)
+        {
+            var userJson = HttpContext.Session.GetString("CurrentUser");
+            if (string.IsNullOrEmpty(userJson))
+            {
+                TempData["ErrorMessage"] = "Vui lòng đăng nhập để thêm vào yêu thích";
+                return RedirectToAction("Login", "Account", new { returnUrl = $"/Shop/Details/{beverageId}" });
+            }
+
+            var user = System.Text.Json.JsonSerializer.Deserialize<User>(userJson);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var wishlist = new Wishlist
+            {
+                UserId = user.Id,
+                BeverageId = beverageId
+            };
+
+            var success = await _apiService.AddToWishlistAsync(wishlist);
+            if (success)
+            {
+                TempData["SuccessMessage"] = "Đã thêm vào danh sách yêu thích";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Không thể thêm vào wishlist. Vui lòng thử lại.";
+            }
+
+            return RedirectToAction("Details", new { id = beverageId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveFromWishlist(int wishlistId)
+        {
+            var userJson = HttpContext.Session.GetString("CurrentUser");
+            if (string.IsNullOrEmpty(userJson))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var success = await _apiService.RemoveFromWishlistAsync(wishlistId);
+            if (success)
+            {
+                TempData["SuccessMessage"] = "Đã xóa khỏi wishlist";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Không thể xóa từ wishlist. Vui lòng thử lại.";
+            }
+
+            return RedirectToAction("Wishlist");
+        }
+
         public IActionResult Cart()
         {
             var cart = GetCart();
@@ -235,8 +292,22 @@ namespace BeverageShop.MVC.Controllers
                     BeverageName = c.Beverage.Name,
                     Quantity = c.Quantity,
                     Price = c.Beverage.Price
-                }).ToList()
+                }).ToList(),
+                OrderDate = DateTime.Now,
+                Status = OrderStatus.Pending,
+                IsPaid = true // mark paid since payment step completed
             };
+
+            // If user is logged in, associate order with user so it appears in their Orders list
+            var userJson = HttpContext.Session.GetString("CurrentUser");
+            if (!string.IsNullOrEmpty(userJson))
+            {
+                var user = System.Text.Json.JsonSerializer.Deserialize<User>(userJson);
+                if (user != null)
+                {
+                    order.UserId = user.Id;
+                }
+            }
 
             var result = await _apiService.CreateOrderAsync(order);
             

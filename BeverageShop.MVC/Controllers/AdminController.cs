@@ -223,15 +223,31 @@ namespace BeverageShop.MVC.Controllers
             if (!IsAdmin()) return Unauthorized();
 
             var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsJsonAsync("http://localhost:5000/api/beverages", beverage);
+            var apiBase = _configuration["ApiSettings:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5000";
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                TempData["SuccessMessage"] = "Thêm sản phẩm thành công!";
-                return RedirectToAction(nameof(Beverages));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+                var response = await client.PostAsJsonAsync($"{apiBase}/api/beverages", beverage, cts.Token);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Thêm sản phẩm thành công!";
+                    return RedirectToAction(nameof(Beverages));
+                }
+
+                var error = await response.Content.ReadAsStringAsync();
+                TempData["ErrorMessage"] = $"Không thể thêm sản phẩm! {error}";
+            }
+            catch (OperationCanceledException)
+            {
+                TempData["ErrorMessage"] = "Yêu cầu tới API quá thời gian. Vui lòng thử lại.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Lỗi khi kết nối tới API: " + ex.Message;
             }
 
-            TempData["ErrorMessage"] = "Không thể thêm sản phẩm!";
             var categories = await _apiService.GetCategoriesAsync();
             ViewBag.Categories = categories;
             return View("Products/CreateBeverage", beverage);

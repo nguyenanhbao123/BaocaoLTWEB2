@@ -30,3 +30,67 @@ D:\code\BeverageShop\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.pdb
 D:\code\BeverageShop\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.genruntimeconfig.cache
 D:\code\BeverageShop\BeverageShop.MVC\obj\Debug\net8.0\ref\BeverageShop.MVC.dll
 D:\code\BeverageShop\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.sourcelink.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\bin\Debug\net8.0\appsettings.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.staticwebassets.runtime.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.staticwebassets.endpoints.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.exe
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.deps.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.runtimeconfig.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.dll
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.pdb
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.AssemblyInfoInputs.cache
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.AssemblyInfo.cs
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.RazorAssemblyInfo.cache
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.RazorAssemblyInfo.cs
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.sourcelink.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\rjimswa.dswa.cache.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\scopedcss\bundle\BeverageShop.MVC.styles.css
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\staticwebassets.build.json.cache
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.dll
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\refint\BeverageShop.MVC.dll
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.pdb
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.genruntimeconfig.cache
+C:\Users\ASUS\Source\Repos\BeverageShop444\BeverageShop.MVC\obj\Debug\net8.0\ref\BeverageShop.MVC.dll
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\bin\Debug\net8.0\appsettings.Development.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\bin\Debug\net8.0\appsettings.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.staticwebassets.endpoints.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.staticwebassets.runtime.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.exe
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.deps.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.runtimeconfig.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.dll
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\bin\Debug\net8.0\BeverageShop.MVC.pdb
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\rpswa.dswa.cache.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.GeneratedMSBuildEditorConfig.editorconfig
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.AssemblyInfoInputs.cache
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.AssemblyInfo.cs
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.csproj.CoreCompileInputs.cache
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.MvcApplicationPartsAssemblyInfo.cache
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.RazorAssemblyInfo.cache
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.RazorAssemblyInfo.cs
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.sourcelink.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\rjimswa.dswa.cache.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\scopedcss\bundle\BeverageShop.MVC.styles.css
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\staticwebassets.build.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\staticwebassets.build.json.cache
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\staticwebassets.development.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.dll
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\refint\BeverageShop.MVC.dll
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.pdb
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\BeverageShop.MVC.genruntimeconfig.cache
+F:\lt web2\Lap trinh web 2\BeverageShop.MVC\obj\Debug\net8.0\ref\BeverageShop.MVC.dll

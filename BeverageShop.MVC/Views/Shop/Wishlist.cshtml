@@ -50,7 +50,8 @@
 
 @section Scripts {
 <script>
-    const API_URL = 'http://localhost:5000';
+    // Use the same API base URL as other views (adjust if your API runs on a different port)
+    const API_URL = 'https://localhost:7000';
     const userId = @(userId.HasValue ? userId.Value.ToString() : "null");
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -62,26 +63,27 @@
     async function loadWishlist() {
         try {
             const response = await fetch(`${API_URL}/api/wishlist/user/${userId}`);
-            
+
             if (!response.ok) {
                 throw new Error('Failed to load wishlist');
             }
-            
+
             const wishlist = await response.json();
-            
-            if (wishlist.length === 0) {
+
+            if (!wishlist || wishlist.length === 0) {
                 document.getElementById('wishlistContainer').style.display = 'none';
                 document.getElementById('emptyWishlist').style.display = 'block';
                 return;
             }
-            
-            // Load beverage details for each wishlist item
-            const animalPromises = wishlist.map(item => 
-                fetch(`${API_URL}/api/beverages/${item.beverageId}`).then(r => r.json())
-            );
-            
-            const beverages = await Promise.all(animalPromises);
-            
+
+            // Load beverage details for each wishlist item (supporting both beverageId or beverage.id shape)
+            const beveragePromises = wishlist.map(item => {
+                const bevId = item.beverageId ?? (item.beverage ? item.beverage.id : null);
+                return fetch(`${API_URL}/api/beverages/${bevId}`).then(r => r.json());
+            });
+
+            const beverages = await Promise.all(beveragePromises);
+
             renderWishlist(wishlist, beverages);
         } catch (error) {
             console.error('Error loading wishlist:', error);
@@ -96,55 +98,54 @@
 
     function renderWishlist(wishlist, beverages) {
         const container = document.getElementById('wishlistContainer');
-        
+
         container.innerHTML = `
             <div class="row">
                 ${beverages.map((beverage, index) => {
                     const wishlistItem = wishlist[index];
                     const addedDate = new Date(wishlistItem.addedDate).toLocaleDateString('vi-VN');
-                    
+
                     return `
-                        <div class="col-md-6 col-lg-4 mb-4" id="wishlist-item-$${beverage.id}">
+                        <div class="col-md-6 col-lg-4 mb-4" id="wishlist-item-${beverage.id}">
                             <div class="card h-100 shadow-sm">
                                 <div class="position-relative">
-                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                        <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
-                                    </div>
+                                    ${beverage.imageUrl ?
+                                        `<img src="${beverage.imageUrl}" class="card-img-top" alt="${beverage.name}" style="height:200px; object-fit:cover;">` :
+                                        `<div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                            <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                                        </div>`
+                                    }
+
                                     <button class="btn btn-sm btn-wishlist active position-absolute top-0 end-0 m-2" 
-                                            onclick="removeFromWishlist($${beverage.id}, ${wishlistItem.id})" 
+                                            onclick="removeFromWishlist(${beverage.id}, ${wishlistItem.id})" 
                                             title="Xóa khỏi yêu thích">
                                         <i class="bi bi-heart-fill"></i>
                                     </button>
-                                    $${beverage.isAvailable && animal.stock > 0 
-                                        ? '' 
-                                        : '<div class="position-absolute bottom-0 start-0 w-100 bg-dark bg-opacity-75 text-white text-center py-2"><small>Hết hàng</small></div>'
-                                    }
+
+                                    ${beverage.isAvailable && beverage.stock > 0 ? '' : '<div class="position-absolute bottom-0 start-0 w-100 bg-dark bg-opacity-75 text-white text-center py-2"><small>Hết hàng</small></div>'}
                                 </div>
                                 <div class="card-body">
-                                    <h5 class="card-title">$${beverage.name}</h5>
+                                    <h5 class="card-title">${beverage.name}</h5>
                                     <p class="card-text small">
-                                        <span class="badge bg-secondary">$${beverage.species}</span>
-                                        <span class="badge bg-info">$${beverage.age} tuổi</span>
+                                        ${beverage.species ? `<span class="badge bg-secondary">${beverage.species}</span>` : ''}
+                                        ${beverage.age ? `<span class="badge bg-info">${beverage.age} tuổi</span>` : ''}
                                     </p>
-                                    <p class="card-text text-truncate" style="max-height: 3em;">$${beverage.description}</p>
+                                    <p class="card-text text-truncate" style="max-height: 3em;">${beverage.description || ''}</p>
                                     <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="text-danger fw-bold fs-5">$${beverage.price.toLocaleString()}đ</span>
-                                        $${beverage.isAvailable && animal.stock > 0 
-                                            ? `<span class="badge bg-success">Còn $${beverage.stock}</span>`
-                                            : `<span class="badge bg-danger">Hết hàng</span>`
-                                        }
+                                        <span class="text-danger fw-bold fs-5">${(beverage.price || 0).toLocaleString()}đ</span>
+                                        ${beverage.isAvailable && beverage.stock > 0 ? `<span class="badge bg-success">Còn ${beverage.stock}</span>` : `<span class="badge bg-danger">Hết hàng</span>`}
                                     </div>
                                     <small class="text-muted">
                                         <i class="bi bi-clock"></i> Thêm vào: ${addedDate}
                                     </small>
                                 </div>
                                 <div class="card-footer bg-white d-flex gap-2">
-                                    <a href="/Shop/Details/$${beverage.id}" class="btn btn-outline-info btn-sm flex-fill">
+                                    <a href="/Shop/Details/${beverage.id}" class="btn btn-outline-info btn-sm flex-fill">
                                         <i class="bi bi-info-circle"></i> Chi tiết
                                     </a>
-                                    $${beverage.isAvailable && animal.stock > 0 ? `
+                                    ${beverage.isAvailable && beverage.stock > 0 ? `
                                         <form action="/Shop/AddToCart" method="post" class="flex-fill">
-                                            <input type="hidden" name="beverageId" value="$${beverage.id}" />
+                                            <input type="hidden" name="beverageId" value="${beverage.id}" />
                                             <input type="hidden" name="quantity" value="1" />
                                             <button type="submit" class="btn btn-primary btn-sm w-100">
                                                 <i class="bi bi-cart-plus"></i> Thêm giỏ
@@ -168,30 +169,32 @@
         if (!confirm('Bạn có chắc muốn xóa khỏi wishlist?')) {
             return;
         }
-        
+
         try {
             const response = await fetch(`${API_URL}/api/wishlist/${wishlistId}`, {
                 method: 'DELETE'
             });
-            
+
             if (response.ok) {
                 // Remove the card with animation
                 const card = document.getElementById(`wishlist-item-${beverageId}`);
-                card.style.transition = 'opacity 0.3s, transform 0.3s';
-                card.style.opacity = '0';
-                card.style.transform = 'scale(0.9)';
-                
-                setTimeout(() => {
-                    card.remove();
-                    
-                    // Check if wishlist is now empty
-                    const container = document.getElementById('wishlistContainer');
-                    if (container.querySelectorAll('.col-md-6').length === 0) {
-                        container.style.display = 'none';
-                        document.getElementById('emptyWishlist').style.display = 'block';
-                    }
-                }, 300);
-                
+                if (card) {
+                    card.style.transition = 'opacity 0.3s, transform 0.3s';
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.9)';
+
+                    setTimeout(() => {
+                        card.remove();
+
+                        // Check if wishlist is now empty
+                        const container = document.getElementById('wishlistContainer');
+                        if (container.querySelectorAll('.col-md-6, .col-md-6.col-lg-4').length === 0) {
+                            container.style.display = 'none';
+                            document.getElementById('emptyWishlist').style.display = 'block';
+                        }
+                    }, 300);
+                }
+
                 showToast('Đã xóa khỏi wishlist!');
             } else {
                 throw new Error('Failed to remove from wishlist');
@@ -208,7 +211,7 @@
         toast.style.zIndex = '9999';
         toast.innerHTML = message;
         document.body.appendChild(toast);
-        
+
         setTimeout(() => toast.remove(), 3000);
     }
 </script>

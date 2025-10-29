@@ -354,11 +354,17 @@
             if (response.ok) {
                 const wishlist = await response.json();
                 wishlist.forEach(item => {
-                    const btn = document.querySelector(`[data-beverage-id="${item.animalId}"]`);
+                    // support both shapes: item.beverageId or item.beverage.id
+                    const id = item.beverageId ?? (item.beverage ? item.beverage.id : null);
+                    if (!id) return;
+                    const btn = document.querySelector(`[data-beverage-id="${id}"]`);
                     if (btn) {
                         btn.classList.add('active');
-                        btn.querySelector('i').classList.remove('bi-heart');
-                        btn.querySelector('i').classList.add('bi-heart-fill');
+                        const icon = btn.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('bi-heart');
+                            icon.classList.add('bi-heart-fill');
+                        }
                     }
                 });
             }
@@ -367,7 +373,7 @@
         }
     }
 
-    async function toggleWishlist(animalId, button) {
+    async function toggleWishlist(beverageId, button) {
         if (!userId) {
             alert('Vui lòng đăng nhập để sử dụng wishlist!');
             window.location.href = '/Account/Login';
@@ -380,14 +386,16 @@
         try {
             if (isActive) {
                 // Remove from wishlist
-                const response = await fetch(`${API_URL}/api/wishlist/user/${userId}/animal/${animalId}`, {
+                const response = await fetch(`${API_URL}/api/wishlist/user/${userId}/beverage/${beverageId}`, {
                     method: 'DELETE'
                 });
                 
                 if (response.ok) {
                     button.classList.remove('active');
-                    icon.classList.remove('bi-heart-fill');
-                    icon.classList.add('bi-heart');
+                    if (icon) {
+                        icon.classList.remove('bi-heart-fill');
+                        icon.classList.add('bi-heart');
+                    }
                     showToast('Đã xóa khỏi yêu thích');
                 }
             } else {
@@ -395,13 +403,15 @@
                 const response = await fetch(`${API_URL}/api/wishlist`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, animalId })
+                    body: JSON.stringify({ userId, beverageId })
                 });
                 
                 if (response.ok) {
                     button.classList.add('active');
-                    icon.classList.remove('bi-heart');
-                    icon.classList.add('bi-heart-fill');
+                    if (icon) {
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill');
+                    }
                     showToast('Đã thêm vào yêu thích!');
                 } else if (response.status === 400) {
                     showToast('Đã có trong wishlist rồi!', 'warning');

@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "BeverageShop.API\\BeverageShop.API.csproj",
+        "Action": "StartWithoutDebugging"
+      },
+      {
+        "Path": "BeverageShop.MVC\\BeverageShop.MVC.csproj",
+        "Action": "StartWithoutDebugging"
+      }
+    ]
+  }
+]

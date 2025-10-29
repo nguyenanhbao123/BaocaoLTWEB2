@@ -1,5 +1,12 @@
 @{
     ViewData["Title"] = "BeverageShop - Cửa hàng đồ uống chính hãng";
+    var userJson = Context.Session.GetString("CurrentUser");
+    int? userId = null;
+    if (!string.IsNullOrEmpty(userJson))
+    {
+        var user = System.Text.Json.JsonSerializer.Deserialize<BeverageShop.MVC.Models.User>(userJson);
+        userId = user?.Id;
+    }
 }
 
 <!-- Top Banner -->
@@ -99,33 +106,38 @@
             foreach (var beverage in ViewBag.CoffeeBeverages)
             {
                 <div class="col-6 col-md-3 col-lg-2">
-                    <a href="/Shop/Details/@beverage.Id" class="text-decoration-none text-dark">
-                        <div class="product-card card h-100 border-0 shadow-sm">
-                            <div class="position-relative">
-                                <img src="@(!string.IsNullOrEmpty(beverage.ImageUrl) ? beverage.ImageUrl : "https://via.placeholder.com/200x200?text=No+Image")" 
-                                     class="card-img-top" 
-                                     alt="@beverage.Name"
-                                     loading="lazy"
-                                     style="height: 200px; object-fit: cover;">
-                                @if (!string.IsNullOrEmpty(beverage.Brand))
-                                {
-                                    <span class="badge bg-primary position-absolute top-0 start-0 m-2">@beverage.Brand</span>
-                                }
-                            </div>
-                            <div class="card-body p-2">
-                                <h6 class="card-title small fw-bold mb-1" style="min-height: 2.4em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@beverage.Name</h6>
-                                <p class="text-danger fw-bold mb-0">@beverage.Price.ToString("N0")đ</p>
-                                <p class="text-muted small mb-1">&nbsp;</p>
-                                <div class="d-flex gap-1">
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star text-warning small"></i>
-                                </div>
+                    <div class="product-card card h-100 border-0 shadow-sm position-relative">
+                        <img src="@(!string.IsNullOrEmpty(beverage.ImageUrl) ? beverage.ImageUrl : "https://via.placeholder.com/200x200?text=No+Image")" 
+                             class="card-img-top" 
+                             alt="@beverage.Name"
+                             loading="lazy"
+                             style="height: 200px; object-fit: cover;">
+                        @if (!string.IsNullOrEmpty(beverage.Brand))
+                        {
+                            <span class="badge bg-primary position-absolute top-0 start-0 m-2">@beverage.Brand</span>
+                        }
+
+                        @if (userId.HasValue)
+                        {
+                            <button class="btn btn-sm btn-wishlist position-absolute top-0 end-0 m-2" onclick="toggleWishlist(@beverage.Id, this)" data-beverage-id="@beverage.Id" title="Thêm vào yêu thích">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        }
+
+                        <div class="card-body p-2">
+                            <h6 class="card-title small fw-bold mb-1" style="min-height: 2.4em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@beverage.Name</h6>
+                            <p class="text-danger fw-bold mb-0">@beverage.Price.ToString("N0")đ</p>
+                            <p class="text-muted small mb-1">&nbsp;</p>
+                            <div class="d-flex gap-1">
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star text-warning small"></i>
                             </div>
                         </div>
-                    </a>
+                        <a href="/Shop/Details/@beverage.Id" class="stretched-link" aria-label="Chi tiết @beverage.Name"></a>
+                    </div>
                 </div>
             }
         }
@@ -170,33 +182,38 @@
             foreach (var beverage in ViewBag.TeaBeverages)
             {
                 <div class="col-6 col-md-3 col-lg-2">
-                    <a href="/Shop/Details/@beverage.Id" class="text-decoration-none text-dark">
-                        <div class="product-card card h-100 border-0 shadow-sm">
-                            <div class="position-relative">
-                                <img src="@(!string.IsNullOrEmpty(beverage.ImageUrl) ? beverage.ImageUrl : "https://via.placeholder.com/200x200?text=No+Image")" 
-                                     class="card-img-top" 
-                                     alt="@beverage.Name"
-                                     loading="lazy"
-                                     style="height: 200px; object-fit: cover;">
-                                @if (!string.IsNullOrEmpty(beverage.Brand))
-                                {
-                                    <span class="badge bg-success position-absolute top-0 start-0 m-2">@beverage.Brand</span>
-                                }
-                            </div>
-                            <div class="card-body p-2">
-                                <h6 class="card-title small fw-bold mb-1" style="min-height: 2.4em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@beverage.Name</h6>
-                                <p class="text-danger fw-bold mb-0">@beverage.Price.ToString("N0")đ</p>
-                                <p class="text-muted small mb-1">&nbsp;</p>
-                                <div class="d-flex gap-1">
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star text-warning small"></i>
-                                </div>
+                    <div class="product-card card h-100 border-0 shadow-sm position-relative">
+                        <img src="@(!string.IsNullOrEmpty(beverage.ImageUrl) ? beverage.ImageUrl : "https://via.placeholder.com/200x200?text=No+Image")" 
+                             class="card-img-top" 
+                             alt="@beverage.Name"
+                             loading="lazy"
+                             style="height: 200px; object-fit: cover;">
+                        @if (!string.IsNullOrEmpty(beverage.Brand))
+                        {
+                            <span class="badge bg-success position-absolute top-0 start-0 m-2">@beverage.Brand</span>
+                        }
+
+                        @if (userId.HasValue)
+                        {
+                            <button class="btn btn-sm btn-wishlist position-absolute top-0 end-0 m-2" onclick="toggleWishlist(@beverage.Id, this)" data-beverage-id="@beverage.Id" title="Thêm vào yêu thích">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        }
+
+                        <div class="card-body p-2">
+                            <h6 class="card-title small fw-bold mb-1" style="min-height: 2.4em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@beverage.Name</h6>
+                            <p class="text-danger fw-bold mb-0">@beverage.Price.ToString("N0")đ</p>
+                            <p class="text-muted small mb-1">&nbsp;</p>
+                            <div class="d-flex gap-1">
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star text-warning small"></i>
                             </div>
                         </div>
-                    </a>
+                        <a href="/Shop/Details/@beverage.Id" class="stretched-link" aria-label="Chi tiết @beverage.Name"></a>
+                    </div>
                 </div>
             }
         }
@@ -229,33 +246,38 @@
             foreach (var beverage in ViewBag.JuiceBeverages)
             {
                 <div class="col-6 col-md-3 col-lg-2">
-                    <a href="/Shop/Details/@beverage.Id" class="text-decoration-none text-dark">
-                        <div class="product-card card h-100 border-0 shadow-sm">
-                            <div class="position-relative">
-                                <img src="@(!string.IsNullOrEmpty(beverage.ImageUrl) ? beverage.ImageUrl : "https://via.placeholder.com/200x200?text=No+Image")" 
-                                     class="card-img-top" 
-                                     alt="@beverage.Name"
-                                     loading="lazy"
-                                     style="height: 200px; object-fit: cover;">
-                                @if (!string.IsNullOrEmpty(beverage.Brand))
-                                {
-                                    <span class="badge bg-info position-absolute top-0 start-0 m-2">@beverage.Brand</span>
-                                }
-                            </div>
-                            <div class="card-body p-2">
-                                <h6 class="card-title small fw-bold mb-1" style="min-height: 2.4em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@beverage.Name</h6>
-                                <p class="text-danger fw-bold mb-0">@beverage.Price.ToString("N0")đ</p>
-                                <p class="text-muted small mb-1">&nbsp;</p>
-                                <div class="d-flex gap-1">
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star-fill text-warning small"></i>
-                                    <i class="bi bi-star-half text-warning small"></i>
-                                </div>
+                    <div class="product-card card h-100 border-0 shadow-sm position-relative">
+                        <img src="@(!string.IsNullOrEmpty(beverage.ImageUrl) ? beverage.ImageUrl : "https://via.placeholder.com/200x200?text=No+Image")" 
+                             class="card-img-top" 
+                             alt="@beverage.Name"
+                             loading="lazy"
+                             style="height: 200px; object-fit: cover;">
+                        @if (!string.IsNullOrEmpty(beverage.Brand))
+                        {
+                            <span class="badge bg-info position-absolute top-0 start-0 m-2">@beverage.Brand</span>
+                        }
+
+                        @if (userId.HasValue)
+                        {
+                            <button class="btn btn-sm btn-wishlist position-absolute top-0 end-0 m-2" onclick="toggleWishlist(@beverage.Id, this)" data-beverage-id="@beverage.Id" title="Thêm vào yêu thích">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        }
+
+                        <div class="card-body p-2">
+                            <h6 class="card-title small fw-bold mb-1" style="min-height: 2.4em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@beverage.Name</h6>
+                            <p class="text-danger fw-bold mb-0">@beverage.Price.ToString("N0")đ</p>
+                            <p class="text-muted small mb-1">&nbsp;</p>
+                            <div class="d-flex gap-1">
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star-fill text-warning small"></i>
+                                <i class="bi bi-star-half text-warning small"></i>
                             </div>
                         </div>
-                    </a>
+                        <a href="/Shop/Details/@beverage.Id" class="stretched-link" aria-label="Chi tiết @beverage.Name"></a>
+                    </div>
                 </div>
             }
         }
@@ -300,6 +322,130 @@
     </div>
 </div>
 
+@section Scripts {
+<script>
+    const API_URL = 'https://localhost:7000';
+    const userId = @(userId.HasValue ? userId.Value.ToString() : "null");
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (userId) {
+            await loadWishlistStatus();
+        }
+    });
+
+    async function loadWishlistStatus() {
+        try {
+            console.log('Loading wishlist status for user', userId);
+            const response = await fetch(`${API_URL}/api/wishlist/user/${userId}`);
+            console.log('Wishlist status response:', response.status, response.statusText);
+            if (response.ok) {
+                const wishlist = await response.json();
+                console.log('Wishlist items:', wishlist);
+                wishlist.forEach(item => {
+                    const id = item.beverageId ?? (item.beverage ? item.beverage.id : null);
+                    if (!id) return;
+                    const btn = document.querySelector(`[data-beverage-id="${id}"]`);
+                    if (btn) {
+                        btn.classList.add('active');
+                        const icon = btn.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('bi-heart');
+                            icon.classList.add('bi-heart-fill');
+                        }
+                    }
+                });
+            } else {
+                const text = await response.text();
+                console.error('Failed to load wishlist status. Response body:', text);
+            }
+        } catch (error) {
+            console.error('Error loading wishlist status:', error);
+        }
+    }
+
+    async function toggleWishlist(beverageId, button) {
+        if (!userId) {
+            alert('Vui lòng đăng nhập để sử dụng wishlist!');
+            window.location.href = '/Account/Login';
+            return;
+        }
+
+        const isActive = button.classList.contains('active');
+        const icon = button.querySelector('i');
+
+        try {
+            if (isActive) {
+                // Try API DELETE
+                const response = await fetch(`${API_URL}/api/wishlist/user/${userId}/beverage/${beverageId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    button.classList.remove('active');
+                    if (icon) { icon.classList.remove('bi-heart-fill'); icon.classList.add('bi-heart'); }
+                    showToast('Đã xóa khỏi yêu thích');
+                    return;
+                }
+
+                // Fallback: call MVC action RemoveFromWishlist via form (if available)
+                console.warn('API DELETE failed, using fallback form submit');
+                submitRemoveWishlistFallback(beverageId, button);
+            } else {
+                // Try API POST
+                const response = await fetch(`${API_URL}/api/wishlist`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, beverageId })
+                });
+                if (response.ok) {
+                    const created = await response.json();
+                    button.classList.add('active');
+                    if (icon) { icon.classList.remove('bi-heart'); icon.classList.add('bi-heart-fill'); }
+                    showToast('Đã thêm vào yêu thích!');
+                    return;
+                }
+
+                // Fallback: submit to MVC Shop/AddToWishlist
+                console.warn('API POST failed, using fallback form submit');
+                submitAddWishlistFallback(beverageId, button);
+            }
+        } catch (error) {
+            console.error('Error toggling wishlist:', error);
+            // Fallback to server-side form submit
+            if (!isActive) submitAddWishlistFallback(beverageId, button);
+            else submitRemoveWishlistFallback(beverageId, button);
+        }
+    }
+
+    function submitAddWishlistFallback(beverageId, button) {
+        // Create a temporary form that posts to /Shop/AddToWishlist
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = '/Shop/AddToWishlist';
+
+        const bevInput = document.createElement('input');
+        bevInput.type = 'hidden';
+        bevInput.name = 'beverageId';
+        bevInput.value = beverageId;
+        form.appendChild(bevInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function submitRemoveWishlistFallback(beverageId, button) {
+        // If we had wishlistId stored as data attribute, we could post it. Use user+beverage route via form GET redirect.
+        window.location.href = `/Shop/RemoveFromWishlist?wishlistId=0`; // unreachable fallback - prefer server API
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'success'} position-fixed top-0 end-0 m-3`;
+        toast.style.zIndex = '9999';
+        toast.innerHTML = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+</script>
+}
+
 <style>
     .promo-card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -311,6 +457,7 @@
     .product-card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         cursor: pointer;
+        z-index: 1; /* ensure product cards are behind header */
     }
     .product-card:hover {
         transform: translateY(-5px);
@@ -331,3 +478,4 @@
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         transform: translateY(-3px);
     }
+</style>

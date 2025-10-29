@@ -402,3 +402,33 @@ button:focus, a:focus {
     display: none;
   }
 }
+
+/* Ensure dropdown displays above other header elements and remains clickable */
+.dropdown {
+  position: relative; /* anchor for absolute menu */
+  z-index: 2000;
+}
+
+.dropdown-menu {
+  position: absolute; /* let Bootstrap position it */
+  z-index: 2050;
+  pointer-events: auto;
+}
+
+/* Ensure navbar and top header don't clip dropdown */
+.top-header, .navbar {
+  z-index: 1000;
+  overflow: visible;
+}
+
+/* Ensure wishlist button sits above stretched-link and other overlays */
+.btn-wishlist {
+  z-index: 3000;
+  position: relative;
+  pointer-events: auto;
+}
+
+/* Keep product-card behind header but allow buttons inside to be clickable */
+.product-card {
+  z-index: 1;
+}
