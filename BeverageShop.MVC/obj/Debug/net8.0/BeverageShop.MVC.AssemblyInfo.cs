@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BeverageShop.MVC")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0f162b2381b9c62e851e316140a88ea386de8475")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3501e4606df77b836f54af82c7f6b00f54d32405")]
 [assembly: System.Reflection.AssemblyProductAttribute("BeverageShop.MVC")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BeverageShop.MVC")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

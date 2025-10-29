@@ -1,5 +1,5 @@
 @inject IConfiguration Configuration
-@model List<dynamic>
+@model List<BeverageShop.MVC.Models.BrandWithCount>
 @{
     ViewData["Title"] = "Quản lý Thương hiệu";
 }
@@ -16,6 +16,9 @@
             </nav>
         </div>
         <div class="col-auto">
+            <a asp-action="Dashboard" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
             <a asp-action="CreateBrand" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Thêm Brand Mới
             </a>
@@ -70,26 +73,26 @@
                                 <tr>
                                     <td>@(i + 1)</td>
                                     <td>
-                                        <span class="badge bg-primary fs-6">@brand.name</span>
+                                        <span class="badge bg-primary fs-6">@brand.Name</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-info">@brand.count sản phẩm</span>
+                                        <span class="badge bg-info">@brand.Count sản phẩm</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-success">@brand.totalStock</span>
+                                        <span class="badge bg-success">@brand.TotalStock</span>
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm">
-                                            <a asp-action="BeveragesByBrand" asp-route-brand="@brand.name" 
+                                            <a asp-action="BeveragesByBrand" asp-route-brand="@brand.Name" 
                                                class="btn btn-outline-info" title="Xem sản phẩm">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a asp-action="EditBrand" asp-route-brand="@brand.name" 
+                                            <a asp-action="EditBrand" asp-route-brand="@brand.Name" 
                                                class="btn btn-outline-warning" title="Đổi tên">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                             <button class="btn btn-outline-danger" 
-                                                    onclick="confirmDeleteBrand('@brand.name', @brand.count)" 
+                                                    onclick="confirmDeleteBrand('@brand.Name', @brand.Count)" 
                                                     title="Xóa brand">
                                                 <i class="bi bi-trash"></i>
                                             </button>

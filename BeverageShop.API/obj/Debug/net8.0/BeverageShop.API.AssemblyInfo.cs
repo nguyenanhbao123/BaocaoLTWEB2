@@ -14,7 +14,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BeverageShop.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0f162b2381b9c62e851e316140a88ea386de8475")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e249e3c20a806c51b6eb45bf288f0f895f38f230")]
+>>>>>>> 18e30f4de917dd7ff525426adef9e5d12cb2097a
 [assembly: System.Reflection.AssemblyProductAttribute("BeverageShop.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BeverageShop.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
